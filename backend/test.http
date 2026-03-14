@@ -1,4 +1,4 @@
-### STEP 1 - Register
+### 1. Register
 POST http://localhost:5000/api/auth/register
 Content-Type: application/json
 
@@ -8,8 +8,7 @@ Content-Type: application/json
     "password": "123456"
 }
 
-
-### Login
+### 2. Login
 POST http://localhost:5000/api/auth/login
 Content-Type: application/json
 
@@ -18,6 +17,53 @@ Content-Type: application/json
     "password": "123456"
 }
 
-### Profile
-GET http://localhost:5000/api/auth/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ3ODU3NywiZXhwIjoxNzc2MDcwNTc3fQ.uwSoD-ugILyARYsveReGvX8ddz8e9RX22XEB4F0Hl0o
+### 3. Add Account
+POST http://localhost:5000/api/accounts
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
+
+{
+    "name": "SBI Savings Account",
+    "type": "savings",
+    "balance": 50000,
+    "currency": "INR",
+    "institution": "State Bank of India"
+}
+
+### 4. Get Accounts
+GET http://localhost:5000/api/accounts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
+
+### 5. Add Transaction
+POST http://localhost:5000/api/transactions
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
+
+{
+    "title": "Swiggy Order",
+    "amount": 350,
+    "type": "expense",
+    "category": "Food & Dining",
+    "accountId": "69b52fe0f92016d4941b32b6",
+    "description": "Dinner order",
+    "date": "2026-03-14"
+}
+
+### 6. Get Transactions
+GET http://localhost:5000/api/transactions
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
+
+### 7. Add Budget
+POST http://localhost:5000/api/budgets
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
+
+{
+    "category": "Food & Dining",
+    "monthlyLimit": 5000,
+    "month": "2026-03"
+}
+
+### 8. Get Budgets
+GET http://localhost:5000/api/budgets
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
