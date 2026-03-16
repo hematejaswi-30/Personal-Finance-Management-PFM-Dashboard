@@ -17,11 +17,13 @@ Content-Type: application/json
     "password": "123456"
 }
 
-### 3. Add Account
+### 3. Get Profile
+GET http://localhost:5000/api/auth/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+### 4. Add Account
 POST http://localhost:5000/api/accounts
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
 {
     "name": "SBI Savings Account",
     "type": "savings",
@@ -30,40 +32,56 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2M
     "institution": "State Bank of India"
 }
 
-### 4. Get Accounts
+### 5. Get All Accounts
 GET http://localhost:5000/api/accounts
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
-
-### 5. Add Transaction
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+### 6. Add Transaction
 POST http://localhost:5000/api/transactions
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
 {
     "title": "Swiggy Order",
     "amount": 350,
     "type": "expense",
     "category": "Food & Dining",
-    "accountId": "69b52fe0f92016d4941b32b6",
+    "accountId": "YOUR_ACCOUNT_ID_HERE",
     "description": "Dinner order",
     "date": "2026-03-14"
 }
 
-### 6. Get Transactions
+### 7. Get All Transactions
 GET http://localhost:5000/api/transactions
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
-
-### 7. Add Budget
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+### 8. Get Transactions by Category
+GET http://localhost:5000/api/transactions/by-category
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+### 9. Get Monthly Summary
+GET http://localhost:5000/api/transactions/monthly-summary
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+### 10. Add Budget
 POST http://localhost:5000/api/budgets
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
 {
     "category": "Food & Dining",
     "monthlyLimit": 5000,
     "month": "2026-03"
 }
 
-### 8. Get Budgets
+### 11. Get All Budgets
 GET http://localhost:5000/api/budgets
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzQ4MTkxNywiZXhwIjoxNzc2MDczOTE3fQ.qW60aP3LqMIC_ktIj63xWj5mhzNkBItiJM1vDQFRbJo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+### 12. Get Budget Summary
+GET http://localhost:5000/api/budgets/summary?month=2026-03
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+### 13. AI Ask
+POST http://localhost:5000/api/ai/ask
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+{
+    "question": "How can I save more money this month?"
+}
+
+### 14. AI Insights
+GET http://localhost:5000/api/ai/insights
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MjExMSwiZXhwIjoxNzc2Mjg0MTExfQ.7FCi10QcxxQFVN4BGF2AXrcan_L06jkJuK7FFw3HaOg

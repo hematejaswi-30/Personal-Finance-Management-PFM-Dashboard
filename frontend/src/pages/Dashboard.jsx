@@ -1,16 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 import Chart from '../components/Chart';
 import TransactionTable from '../components/TransactionTable';
 import {
-    getAccounts,
-    getTransactions,
-    getByCategory,
-    getMonthlySummary,
-    getBudgetSummary,
-    addTransaction,
-    addAccount
+    getAccounts, getTransactions, getByCategory,
+    getMonthlySummary, getBudgetSummary,
+    addTransaction, addAccount
 } from '../services/api';
 
 const Dashboard = () => {
@@ -22,43 +18,24 @@ const Dashboard = () => {
     const [budgetSummary, setBudgetSummary] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-
-    // Add Transaction Form
     const [showAddTransaction, setShowAddTransaction] = useState(false);
-    const [transactionForm, setTransactionForm] = useState({
-        title: '',
-        amount: '',
-        type: 'expense',
-        category: 'Food & Dining',
-        accountId: '',
-        description: ''
-    });
-
-    // Add Account Form
     const [showAddAccount, setShowAddAccount] = useState(false);
+    const [transactionForm, setTransactionForm] = useState({
+        title: '', amount: '', type: 'expense',
+        category: 'Food & Dining', accountId: '', description: ''
+    });
     const [accountForm, setAccountForm] = useState({
-        name: '',
-        type: 'savings',
-        balance: '',
-        institution: ''
+        name: '', type: 'savings', balance: '', institution: ''
     });
 
-    // Fetch all data
     const fetchData = async () => {
         try {
             setLoading(true);
             const currentMonth = new Date().toISOString().slice(0, 7);
-            const [
-                accountsRes,
-                transactionsRes,
-                categoryRes,
-                monthlyRes,
-                budgetRes
-            ] = await Promise.all([
-                getAccounts(),
-                getTransactions(),
-                getByCategory(),
-                getMonthlySummary(),
+            const [accountsRes, transactionsRes, categoryRes,
+                monthlyRes, budgetRes] = await Promise.all([
+                getAccounts(), getTransactions(),
+                getByCategory(), getMonthlySummary(),
                 getBudgetSummary(currentMonth)
             ]);
             setAccounts(accountsRes.data);
@@ -66,30 +43,26 @@ const Dashboard = () => {
             setCategoryData(categoryRes.data);
             setMonthlyData(monthlyRes.data);
             setBudgetSummary(budgetRes.data);
-        } catch (error) {
+        } catch (err) {
             setError('Failed to load data');
         } finally {
             setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    useEffect(() => { fetchData(); }, []);
 
-    // Calculate total balance
-    const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
-
-    // Calculate total income and expenses
+    const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
     const totalIncome = transactions
         .filter(t => t.type === 'income')
         .reduce((sum, t) => sum + t.amount, 0);
-
     const totalExpenses = transactions
         .filter(t => t.type === 'expense')
         .reduce((sum, t) => sum + t.amount, 0);
+    const savingsRate = totalIncome > 0
+        ? (((totalIncome - totalExpenses) / totalIncome) * 100).toFixed(1)
+        : 0;
 
-    // Handle Add Transaction
     const handleAddTransaction = async (e) => {
         e.preventDefault();
         try {
@@ -99,20 +72,15 @@ const Dashboard = () => {
             });
             setShowAddTransaction(false);
             setTransactionForm({
-                title: '',
-                amount: '',
-                type: 'expense',
-                category: 'Food & Dining',
-                accountId: '',
-                description: ''
+                title: '', amount: '', type: 'expense',
+                category: 'Food & Dining', accountId: '', description: ''
             });
             fetchData();
-        } catch (error) {
+        } catch (err) {
             setError('Failed to add transaction');
         }
     };
 
-    // Handle Add Account
     const handleAddAccount = async (e) => {
         e.preventDefault();
         try {
@@ -122,84 +90,168 @@ const Dashboard = () => {
             });
             setShowAddAccount(false);
             setAccountForm({
-                name: '',
-                type: 'savings',
-                balance: '',
-                institution: ''
+                name: '', type: 'savings', balance: '', institution: ''
             });
             fetchData();
-        } catch (error) {
+        } catch (err) {
             setError('Failed to add account');
         }
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-                <div className="text-center">
-                    <div className="text-4xl mb-4">💰</div>
-                    <p className="text-gray-600 text-lg">Loading your finances...</p>
+            <div className="page-layout">
+                <Sidebar />
+                <div className="main-content" style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <div style={{
+                            width: '40px', height: '40px',
+                            border: '2px solid var(--border)',
+                            borderTop: '2px solid var(--accent-purple)',
+                            borderRadius: '50%',
+                            animation: 'spin 1s linear infinite',
+                            margin: '0 auto 16px'
+                        }} />
+                        <p style={{
+                            color: 'var(--text-muted)',
+                            fontSize: '13px'
+                        }}>
+                            Loading your finances...
+                        </p>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <Navbar />
+        <div className="page-layout">
+            <Sidebar />
+            <div className="main-content">
 
-            <div className="max-w-7xl mx-auto px-4 py-6">
-
-                {/* Welcome Message */}
-                <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-gray-800">
-                        Welcome back, {user?.name}! 👋
-                    </h1>
-                    <p className="text-gray-500">
-                        Here is your financial overview
-                    </p>
+                {/* Header */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: '28px'
+                }} className="fade-in">
+                    <div>
+                        <h1 style={{
+                            fontFamily: 'Syne, sans-serif',
+                            fontSize: '22px',
+                            fontWeight: '700',
+                            color: 'var(--text-primary)',
+                            letterSpacing: '-0.3px'
+                        }}>
+                            Good {new Date().getHours() < 12 ? 'Morning' :
+                                new Date().getHours() < 17 ? 'Afternoon' :
+                                'Evening'}, {user?.name?.split(' ')[0]} 👋
+                        </h1>
+                        <p style={{
+                            fontSize: '13px',
+                            color: 'var(--text-muted)',
+                            marginTop: '4px'
+                        }}>
+                            {new Date().toLocaleDateString('en-IN', {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                            })}
+                        </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button
+                            onClick={() => setShowAddAccount(true)}
+                            className="btn-secondary"
+                            style={{ fontSize: '13px', padding: '8px 16px' }}
+                        >
+                            + Account
+                        </button>
+                        <button
+                            onClick={() => setShowAddTransaction(true)}
+                            className="btn-primary"
+                            style={{ width: 'auto', fontSize: '13px', padding: '8px 16px' }}
+                        >
+                            + Transaction
+                        </button>
+                    </div>
                 </div>
 
-                {/* Error Message */}
-                {error && (
-                    <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4">
-                        {error}
-                    </div>
-                )}
+                {error && <div className="error-msg">{error}</div>}
 
-                {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div className="bg-white rounded-xl shadow p-6">
-                        <p className="text-gray-500 text-sm">Total Balance</p>
-                        <p className="text-3xl font-bold text-blue-600">
-                            ₹{totalBalance.toLocaleString()}
-                        </p>
-                        <p className="text-gray-400 text-xs mt-1">
-                            Across {accounts.length} accounts
-                        </p>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-6">
-                        <p className="text-gray-500 text-sm">Total Income</p>
-                        <p className="text-3xl font-bold text-green-600">
-                            ₹{totalIncome.toLocaleString()}
-                        </p>
-                        <p className="text-gray-400 text-xs mt-1">
-                            All time
-                        </p>
-                    </div>
-                    <div className="bg-white rounded-xl shadow p-6">
-                        <p className="text-gray-500 text-sm">Total Expenses</p>
-                        <p className="text-3xl font-bold text-red-600">
-                            ₹{totalExpenses.toLocaleString()}
-                        </p>
-                        <p className="text-gray-400 text-xs mt-1">
-                            All time
-                        </p>
-                    </div>
+                {/* Stats Cards */}
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gap: '14px',
+                    marginBottom: '20px'
+                }} className="fade-in">
+                    {[
+                        {
+                            label: 'Total Balance',
+                            value: `₹${totalBalance.toLocaleString()}`,
+                            color: 'var(--accent-purple)',
+                            sub: `${accounts.length} accounts`
+                        },
+                        {
+                            label: 'Total Income',
+                            value: `₹${totalIncome.toLocaleString()}`,
+                            color: 'var(--accent-green)',
+                            sub: 'All time'
+                        },
+                        {
+                            label: 'Total Expenses',
+                            value: `₹${totalExpenses.toLocaleString()}`,
+                            color: 'var(--accent-red)',
+                            sub: 'All time'
+                        },
+                        {
+                            label: 'Savings Rate',
+                            value: `${savingsRate}%`,
+                            color: 'var(--accent-yellow)',
+                            sub: savingsRate > 20 ? '🎯 Great!' : '💡 Improve'
+                        }
+                    ].map((stat, i) => (
+                        <div key={i} className="card" style={{
+                            animationDelay: `${i * 0.05}s`
+                        }}>
+                            <div style={{
+                                fontSize: '11px',
+                                color: 'var(--text-muted)',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.8px',
+                                marginBottom: '10px'
+                            }}>
+                                {stat.label}
+                            </div>
+                            <div style={{
+                                fontFamily: 'Syne, sans-serif',
+                                fontSize: '22px',
+                                fontWeight: '700',
+                                color: stat.color,
+                                letterSpacing: '-0.5px',
+                                marginBottom: '6px'
+                            }}>
+                                {stat.value}
+                            </div>
+                            <div style={{
+                                fontSize: '11px',
+                                color: 'var(--text-muted)'
+                            }}>
+                                {stat.sub}
+                            </div>
+                        </div>
+                    ))}
                 </div>
 
                 {/* Charts */}
-                <div className="mb-6">
+                <div style={{ marginBottom: '20px' }} className="fade-in">
                     <Chart
                         categoryData={categoryData}
                         monthlyData={monthlyData}
@@ -208,90 +260,195 @@ const Dashboard = () => {
 
                 {/* Budget Summary */}
                 {budgetSummary.length > 0 && (
-                    <div className="bg-white rounded-xl shadow p-6 mb-6">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-4">
-                            Budget Overview
-                        </h2>
-                        <div className="space-y-4">
-                            {budgetSummary.map((budget, index) => (
-                                <div key={index}>
-                                    <div className="flex justify-between text-sm mb-1">
-                                        <span className="font-medium">
+                    <div className="card fade-in" style={{ marginBottom: '20px' }}>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '16px'
+                        }}>
+                            <h3 style={{
+                                fontSize: '13px',
+                                fontWeight: '500',
+                                color: 'var(--text-primary)'
+                            }}>Budget Overview</h3>
+                            <span className="badge badge-blue">
+                                This month
+                            </span>
+                        </div>
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                            gap: '16px'
+                        }}>
+                            {budgetSummary.map((budget, i) => (
+                                <div key={i}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        fontSize: '12px',
+                                        marginBottom: '6px'
+                                    }}>
+                                        <span style={{
+                                            color: 'var(--text-secondary)'
+                                        }}>
                                             {budget.category}
                                         </span>
-                                        <span className="text-gray-500">
+                                        <span style={{
+                                            color: 'var(--text-muted)'
+                                        }}>
                                             ₹{budget.actualSpending} / ₹{budget.monthlyLimit}
                                         </span>
                                     </div>
-                                    <div className="w-full bg-gray-200 rounded-full h-2">
-                                        <div
-                                            className={`h-2 rounded-full ${budget.percentage > 90 ? 'bg-red-500' : budget.percentage > 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
-                                            style={{ width: `${Math.min(budget.percentage, 100)}%` }}
-                                        />
+                                    <div style={{
+                                        height: '5px',
+                                        background: 'var(--bg-tertiary)',
+                                        borderRadius: '3px',
+                                        overflow: 'hidden'
+                                    }}>
+                                        <div style={{
+                                            height: '100%',
+                                            width: `${Math.min(budget.percentage, 100)}%`,
+                                            background: budget.percentage > 90
+                                                ? 'var(--accent-red)'
+                                                : budget.percentage > 70
+                                                ? 'var(--accent-yellow)'
+                                                : 'var(--accent-green)',
+                                            borderRadius: '3px',
+                                            transition: 'width 0.6s ease'
+                                        }} />
                                     </div>
-                                    <p className="text-xs text-gray-400 mt-1">
-                                        {budget.percentage}% used —
-                                        ₹{budget.remaining} remaining
-                                    </p>
+                                    <div style={{
+                                        fontSize: '11px',
+                                        color: 'var(--text-muted)',
+                                        marginTop: '4px'
+                                    }}>
+                                        {budget.percentage}% used ·
+                                        ₹{budget.remaining} left
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 )}
 
-                {/* Accounts Section */}
-                <div className="bg-white rounded-xl shadow p-6 mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Bank Accounts
-                        </h2>
+                {/* Accounts */}
+                <div className="card fade-in" style={{ marginBottom: '20px' }}>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '16px'
+                    }}>
+                        <h3 style={{
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            color: 'var(--text-primary)'
+                        }}>Bank Accounts</h3>
                         <button
                             onClick={() => setShowAddAccount(true)}
-                            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"
+                            style={{
+                                background: 'var(--bg-tertiary)',
+                                border: '0.5px solid var(--border-light)',
+                                borderRadius: '6px',
+                                padding: '5px 12px',
+                                fontSize: '12px',
+                                color: 'var(--text-secondary)',
+                                cursor: 'pointer'
+                            }}
                         >
-                            + Add Account
+                            + Add
                         </button>
                     </div>
                     {accounts.length === 0 ? (
-                        <p className="text-gray-400 text-center py-4">
-                            No accounts yet — add one!
-                        </p>
+                        <div style={{
+                            textAlign: 'center',
+                            padding: '24px',
+                            color: 'var(--text-muted)',
+                            fontSize: '13px'
+                        }}>
+                            No accounts yet — add one to get started!
+                        </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {accounts.map(account => (
-                                <div
-                                    key={account._id}
-                                    className="border border-gray-200 rounded-lg p-4"
-                                >
-                                    <p className="font-medium text-gray-800">
-                                        {account.name}
-                                    </p>
-                                    <p className="text-gray-500 text-sm">
-                                        {account.institution}
-                                    </p>
-                                    <p className="text-2xl font-bold text-blue-600 mt-2">
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(2, 1fr)',
+                            gap: '12px'
+                        }}>
+                            {accounts.map((account) => (
+                                <div key={account._id} style={{
+                                    background: 'var(--bg-tertiary)',
+                                    border: '0.5px solid var(--border)',
+                                    borderRadius: '10px',
+                                    padding: '14px'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'flex-start',
+                                        marginBottom: '8px'
+                                    }}>
+                                        <div>
+                                            <div style={{
+                                                fontSize: '13px',
+                                                fontWeight: '500',
+                                                color: 'var(--text-primary)'
+                                            }}>
+                                                {account.name}
+                                            </div>
+                                            <div style={{
+                                                fontSize: '11px',
+                                                color: 'var(--text-muted)',
+                                                marginTop: '2px'
+                                            }}>
+                                                {account.institution}
+                                            </div>
+                                        </div>
+                                        <span className="badge badge-purple"
+                                            style={{ fontSize: '10px' }}>
+                                            {account.type}
+                                        </span>
+                                    </div>
+                                    <div style={{
+                                        fontFamily: 'Syne, sans-serif',
+                                        fontSize: '20px',
+                                        fontWeight: '700',
+                                        color: 'var(--accent-purple)'
+                                    }}>
                                         ₹{account.balance.toLocaleString()}
-                                    </p>
-                                    <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-                                        {account.type}
-                                    </span>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     )}
                 </div>
 
-                {/* Transactions Section */}
-                <div className="bg-white rounded-xl shadow p-6 mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-lg font-semibold text-gray-800">
-                            Recent Transactions
-                        </h2>
+                {/* Transactions */}
+                <div className="card fade-in">
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '16px'
+                    }}>
+                        <h3 style={{
+                            fontSize: '13px',
+                            fontWeight: '500',
+                            color: 'var(--text-primary)'
+                        }}>Recent Transactions</h3>
                         <button
                             onClick={() => setShowAddTransaction(true)}
-                            className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700"
+                            style={{
+                                background: 'var(--bg-tertiary)',
+                                border: '0.5px solid var(--border-light)',
+                                borderRadius: '6px',
+                                padding: '5px 12px',
+                                fontSize: '12px',
+                                color: 'var(--text-secondary)',
+                                cursor: 'pointer'
+                            }}
                         >
-                            + Add Transaction
+                            + Add
                         </button>
                     </div>
                     <TransactionTable transactions={transactions} />
@@ -301,128 +458,117 @@ const Dashboard = () => {
 
             {/* Add Transaction Modal */}
             {showAddTransaction && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-                        <h2 className="text-xl font-bold mb-4">
-                            Add Transaction
-                        </h2>
+                <div className="modal-overlay"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget)
+                            setShowAddTransaction(false)
+                    }}>
+                    <div className="modal">
+                        <h2 style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'var(--text-primary)',
+                            marginBottom: '20px'
+                        }}>Add Transaction</h2>
                         <form onSubmit={handleAddTransaction}>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Title
-                                </label>
-                                <input
-                                    type="text"
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Title</label>
+                                <input className="input"
+                                    placeholder="e.g. Swiggy Order"
                                     value={transactionForm.title}
                                     onChange={(e) => setTransactionForm({
                                         ...transactionForm,
                                         title: e.target.value
                                     })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Amount (₹)
-                                </label>
-                                <input
-                                    type="number"
-                                    value={transactionForm.amount}
-                                    onChange={(e) => setTransactionForm({
-                                        ...transactionForm,
-                                        amount: e.target.value
-                                    })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
-                                />
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '12px',
+                                marginBottom: '14px'
+                            }}>
+                                <div>
+                                    <label className="label">Amount (₹)</label>
+                                    <input className="input" type="number"
+                                        placeholder="0"
+                                        value={transactionForm.amount}
+                                        onChange={(e) => setTransactionForm({
+                                            ...transactionForm,
+                                            amount: e.target.value
+                                        })}
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="label">Type</label>
+                                    <select className="input"
+                                        value={transactionForm.type}
+                                        onChange={(e) => setTransactionForm({
+                                            ...transactionForm,
+                                            type: e.target.value
+                                        })}
+                                    >
+                                        <option value="expense">Expense</option>
+                                        <option value="income">Income</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Type
-                                </label>
-                                <select
-                                    value={transactionForm.type}
-                                    onChange={(e) => setTransactionForm({
-                                        ...transactionForm,
-                                        type: e.target.value
-                                    })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="expense">Expense</option>
-                                    <option value="income">Income</option>
-                                </select>
-                            </div>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Category
-                                </label>
-                                <select
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Category</label>
+                                <select className="input"
                                     value={transactionForm.category}
                                     onChange={(e) => setTransactionForm({
                                         ...transactionForm,
                                         category: e.target.value
                                     })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
-                                    <option>Food & Dining</option>
-                                    <option>Shopping</option>
-                                    <option>Transport</option>
-                                    <option>Entertainment</option>
-                                    <option>Health</option>
-                                    <option>Education</option>
-                                    <option>Bills & Utilities</option>
-                                    <option>Salary</option>
-                                    <option>Investment</option>
-                                    <option>Other</option>
+                                    {['Food & Dining', 'Shopping', 'Transport',
+                                        'Entertainment', 'Health', 'Education',
+                                        'Bills & Utilities', 'Salary',
+                                        'Investment', 'Other'].map(c => (
+                                        <option key={c}>{c}</option>
+                                    ))}
                                 </select>
                             </div>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Account
-                                </label>
-                                <select
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Account</label>
+                                <select className="input"
                                     value={transactionForm.accountId}
                                     onChange={(e) => setTransactionForm({
                                         ...transactionForm,
                                         accountId: e.target.value
                                     })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     required
                                 >
-                                    <option value="">Select Account</option>
-                                    {accounts.map(acc => (
-                                        <option key={acc._id} value={acc._id}>
-                                            {acc.name}
+                                    <option value="">Select account</option>
+                                    {accounts.map(a => (
+                                        <option key={a._id} value={a._id}>
+                                            {a.name}
                                         </option>
                                     ))}
                                 </select>
                             </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Description
-                                </label>
-                                <input
-                                    type="text"
+                            <div style={{ marginBottom: '20px' }}>
+                                <label className="label">Description</label>
+                                <input className="input"
+                                    placeholder="Optional note"
                                     value={transactionForm.description}
                                     onChange={(e) => setTransactionForm({
                                         ...transactionForm,
                                         description: e.target.value
                                     })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
-                            <div className="flex gap-3">
-                                <button
-                                    type="submit"
-                                    className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
-                                >
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" className="btn-primary">
                                     Add Transaction
                                 </button>
                                 <button
                                     type="button"
+                                    className="btn-secondary"
                                     onClick={() => setShowAddTransaction(false)}
-                                    className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300"
                                 >
                                     Cancel
                                 </button>
@@ -434,85 +580,84 @@ const Dashboard = () => {
 
             {/* Add Account Modal */}
             {showAddAccount && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl p-6 w-full max-w-md">
-                        <h2 className="text-xl font-bold mb-4">
-                            Add Bank Account
-                        </h2>
+                <div className="modal-overlay"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget)
+                            setShowAddAccount(false)
+                    }}>
+                    <div className="modal">
+                        <h2 style={{
+                            fontSize: '16px',
+                            fontWeight: '600',
+                            color: 'var(--text-primary)',
+                            marginBottom: '20px'
+                        }}>Add Bank Account</h2>
                         <form onSubmit={handleAddAccount}>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Account Name
-                                </label>
-                                <input
-                                    type="text"
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Account Name</label>
+                                <input className="input"
+                                    placeholder="e.g. SBI Savings"
                                     value={accountForm.name}
                                     onChange={(e) => setAccountForm({
                                         ...accountForm,
                                         name: e.target.value
                                     })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Account Type
-                                </label>
-                                <select
-                                    value={accountForm.type}
-                                    onChange={(e) => setAccountForm({
-                                        ...accountForm,
-                                        type: e.target.value
-                                    })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                >
-                                    <option value="savings">Savings</option>
-                                    <option value="checking">Checking</option>
-                                    <option value="credit">Credit</option>
-                                    <option value="investment">Investment</option>
-                                </select>
+                            <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: '12px',
+                                marginBottom: '14px'
+                            }}>
+                                <div>
+                                    <label className="label">Type</label>
+                                    <select className="input"
+                                        value={accountForm.type}
+                                        onChange={(e) => setAccountForm({
+                                            ...accountForm,
+                                            type: e.target.value
+                                        })}
+                                    >
+                                        <option value="savings">Savings</option>
+                                        <option value="checking">Checking</option>
+                                        <option value="credit">Credit</option>
+                                        <option value="investment">Investment</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="label">Balance (₹)</label>
+                                    <input className="input" type="number"
+                                        placeholder="0"
+                                        value={accountForm.balance}
+                                        onChange={(e) => setAccountForm({
+                                            ...accountForm,
+                                            balance: e.target.value
+                                        })}
+                                        required
+                                    />
+                                </div>
                             </div>
-                            <div className="mb-3">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Current Balance (₹)
-                                </label>
-                                <input
-                                    type="number"
-                                    value={accountForm.balance}
-                                    onChange={(e) => setAccountForm({
-                                        ...accountForm,
-                                        balance: e.target.value
-                                    })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Bank Name
-                                </label>
-                                <input
-                                    type="text"
+                            <div style={{ marginBottom: '20px' }}>
+                                <label className="label">Bank Name</label>
+                                <input className="input"
+                                    placeholder="e.g. State Bank of India"
                                     value={accountForm.institution}
                                     onChange={(e) => setAccountForm({
                                         ...accountForm,
                                         institution: e.target.value
                                     })}
-                                    className="w-full border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
                             </div>
-                            <div className="flex gap-3">
-                                <button
-                                    type="submit"
-                                    className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-                                >
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" className="btn-primary">
                                     Add Account
                                 </button>
                                 <button
                                     type="button"
+                                    className="btn-secondary"
                                     onClick={() => setShowAddAccount(false)}
-                                    className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300"
                                 >
                                     Cancel
                                 </button>
@@ -521,6 +666,13 @@ const Dashboard = () => {
                     </div>
                 </div>
             )}
+
+            <style>{`
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            `}</style>
         </div>
     );
 };
