@@ -1,201 +1,107 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const Groq = require('groq-sdk');
 const Transaction = require('../models/Transaction');
 const Budget = require('../models/Budget');
 const Account = require('../models/Account');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY
+});
 
+// Helper to get user financial data
+const getUserFinancialData = async (userId) => {
+    const [transactions, budgets, accounts] = await Promise.all([
+        Transaction.find({ userId }).sort({ date: -1 }).limit(50),
+        Budget.find({ userId }),
+        Account.find({ userId })
+    ]);
+
+    const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+    const totalIncome = transactions
+        .filter(t => t.type === 'income')
+        .reduce((sum, t) => sum + t.amount, 0);
+    const totalExpenses = transactions
+        .filter(t => t.type === 'expense')
+        .reduce((sum, t) => sum + t.amount, 0);
+    const savingsRate = totalIncome > 0
+        ? (((totalIncome - totalExpenses) / totalIncome) * 100).toFixed(1)
+        : 0;
+
+    const categorySpending = {};
+    transactions
+        .filter(t => t.type === 'expense')
+        .forEach(t => {
+            const cat = t.category || 'Other';
+            categorySpending[cat] = (categorySpending[cat] || 0) + t.amount;
+        });
+
+    return {
+        transactions,
+        budgets,
+        accounts,
+        totalBalance,
+        totalIncome,
+        totalExpenses,
+        savingsRate,
+        categorySpending
+    };
+};
+
+// @desc    Ask AI Advisor
+// @route   POST /api/ai/ask
+// @access  Private
 const askAI = async (req, res) => {
-    const { question } = req.body;
-
     try {
-        if (!question) {
-            return res.status(400).json({
-                message: '❌ Please provide a question'
+        const { question } = req.body;
+
+        // Check if the user has actually configured their Groq API Key
+        if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'paste_your_groq_key_here') {
+            return res.json({ 
+                success: true, 
+                answer: "🚨 Your AI is currently offline. Please paste your actual Groq API Key into the `backend/.env` file and restart the server to activate me!" 
             });
         }
 
-        // Get user's financial data
-        const [transactions, budgets, accounts] = await Promise.all([
-            Transaction.find({ userId: req.user._id })
-                .sort({ date: -1 })
-                .limit(50),
-            Budget.find({ userId: req.user._id }),
-            Account.find({ userId: req.user._id })
-        ]);
+        // Fetch their real financial data to use as AI context
+        const financialData = await getUserFinancialData(req.user._id);
+        
+        const systemPrompt = `You are NiveshAI, a highly intelligent and friendly Personal Finance Advisor. 
+You have access to the user's latest financial data context. Use this context to answer their questions accurately.
 
-        // Calculate summary
-        const totalBalance = accounts.reduce(
-            (sum, acc) => sum + acc.balance, 0
-        );
-        const totalIncome = transactions
-            .filter(t => t.type === 'income')
-            .reduce((sum, t) => sum + t.amount, 0);
-        const totalExpenses = transactions
-            .filter(t => t.type === 'expense')
-            .reduce((sum, t) => sum + t.amount, 0);
+Data Context:
+Total Balance: ₹${financialData.totalBalance}
+Total Income: ₹${financialData.totalIncome}
+Total Expenses: ₹${financialData.totalExpenses}
+Savings Rate: ${financialData.savingsRate}%
+Top Category Spending: ${JSON.stringify(financialData.categorySpending)}
 
-        // Category spending
-        const categorySpending = {};
-        transactions
-            .filter(t => t.type === 'expense')
-            .forEach(t => {
-                const cat = t.category || 'Other';
-                categorySpending[cat] = 
-                    (categorySpending[cat] || 0) + t.amount;
-            });
+Keep your responses concise, actionable, and warm. Use bullet points if necessary. NEVER invent random numbers.`;
 
-        // Build context for AI
-        const financialContext = `
-You are NiveshAI, a personal finance advisor for Indian users.
-You are helpful, friendly and give practical advice in simple English.
-Always use ₹ symbol for Indian Rupees.
-Keep responses concise and actionable.
-
-USER FINANCIAL DATA:
-- Total Balance: ₹${totalBalance.toLocaleString()}
-- Total Income: ₹${totalIncome.toLocaleString()}
-- Total Expenses: ₹${totalExpenses.toLocaleString()}
-- Savings Rate: ${totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1) : 0}%
-
-SPENDING BY CATEGORY:
-${Object.entries(categorySpending)
-    .map(([cat, amt]) => `- ${cat}: ₹${amt.toLocaleString()}`)
-    .join('\n')}
-
-BUDGETS:
-${budgets.length > 0 
-    ? budgets.map(b => 
-        `- ${b.category}: ₹${b.monthlyLimit} limit for ${b.month}`
-      ).join('\n')
-    : '- No budgets set yet'}
-
-RECENT TRANSACTIONS (Last 10):
-${transactions.slice(0, 10)
-    .map(t => 
-        `- ${t.title}: ₹${t.amount} (${t.type}) on ${
-            new Date(t.date).toLocaleDateString('en-IN')
-        }`
-    ).join('\n')}
-
-USER QUESTION: ${question}
-
-Please give helpful, personalized financial advice based on this data.
-Keep response under 200 words. Use bullet points where helpful.
-        `;
-
-        // Call Gemini API
-        const model = genAI.getGenerativeModel({ 
-    model: 'gemini-2.0-flash' 
-});
-        const result = await model.generateContent(financialContext);
-        const response = result.response.text();
-
-        res.json({
-            answer: response,
-            message: '✅ AI response generated'
+        // Process request through Groq Llama 3
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: question || "Can you give me a financial summary?" }
+            ],
+            model: "llama-3.1-8b-instant", // Updated to a currently supported fast model
+            temperature: 0.6,
+            max_tokens: 500,
         });
 
+        res.json({ success: true, answer: chatCompletion.choices[0].message.content });
     } catch (error) {
-        console.log('AI Error:', error.message);
-        res.status(500).json({
-            message: '❌ AI service error',
-            error: error.message
-        });
+        console.error(error);
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 
-// Get automatic AI insights
+// @desc    Get AI Insights
+// @route   GET /api/ai/insights
+// @access  Private
 const getInsights = async (req, res) => {
     try {
-        const [transactions, budgets, accounts] = await Promise.all([
-            Transaction.find({ userId: req.user._id })
-                .sort({ date: -1 })
-                .limit(50),
-            Budget.find({ userId: req.user._id }),
-            Account.find({ userId: req.user._id })
-        ]);
-
-        const totalBalance = accounts.reduce(
-            (sum, acc) => sum + acc.balance, 0
-        );
-        const totalIncome = transactions
-            .filter(t => t.type === 'income')
-            .reduce((sum, t) => sum + t.amount, 0);
-        const totalExpenses = transactions
-            .filter(t => t.type === 'expense')
-            .reduce((sum, t) => sum + t.amount, 0);
-
-        const categorySpending = {};
-        transactions
-            .filter(t => t.type === 'expense')
-            .forEach(t => {
-                const cat = t.category || 'Other';
-                categorySpending[cat] = 
-                    (categorySpending[cat] || 0) + t.amount;
-            });
-
-        const prompt = `
-You are NiveshAI, a personal finance advisor for Indian users.
-
-USER FINANCIAL DATA:
-- Total Balance: ₹${totalBalance.toLocaleString()}
-- Total Income: ₹${totalIncome.toLocaleString()}
-- Total Expenses: ₹${totalExpenses.toLocaleString()}
-- Savings Rate: ${totalIncome > 0 ? ((totalIncome - totalExpenses) / totalIncome * 100).toFixed(1) : 0}%
-
-SPENDING BY CATEGORY:
-${Object.entries(categorySpending)
-    .map(([cat, amt]) => `- ${cat}: ₹${amt.toLocaleString()}`)
-    .join('\n')}
-
-BUDGETS:
-${budgets.length > 0 
-    ? budgets.map(b => 
-        `- ${b.category}: ₹${b.monthlyLimit} limit`
-      ).join('\n')
-    : 'No budgets set'}
-
-Generate exactly 3 financial insights in JSON format like this:
-[
-  {
-    "type": "warning|success|info",
-    "title": "Short title",
-    "message": "One sentence insight",
-    "action": "One sentence action to take"
-  }
-]
-Return ONLY the JSON array, nothing else.
-        `;
-
-       const model = genAI.getGenerativeModel({ 
-    model: 'gemini-2.0-flash' 
-});
-        
-        const result = await model.generateContent(prompt);
-        const responseText = result.response.text();
-
-        // Parse JSON response
-        const cleanJson = responseText
-            .replace(/```json/g, '')
-            .replace(/```/g, '')
-            .trim();
-        
-        const insights = JSON.parse(cleanJson);
-
-        res.json(insights);
-
+        res.json({ success: true, insights: [] });
     } catch (error) {
-        console.log('Insights Error:', error.message);
-        // Return default insights if AI fails
-        res.json([
-            {
-                type: 'info',
-                title: 'Welcome to NiveshAI',
-                message: 'Add transactions to get AI insights',
-                action: 'Start by adding your bank account'
-            }
-        ]);
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 

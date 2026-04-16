@@ -51,12 +51,12 @@ const Budgets = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Delete this budget?')) return;
         try {
             await deleteBudget(id);
             fetchData();
         } catch (err) {
             console.log(err);
+            alert("Error: Could not delete budget");
         }
     };
 

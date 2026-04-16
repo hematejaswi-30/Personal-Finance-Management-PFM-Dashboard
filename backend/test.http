@@ -77,7 +77,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2M
 ### 13. AI Ask
 POST http://localhost:5000/api/ai/ask
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5YjUyMjc2MGM4YjMzM2NmNWNhOWYyNiIsImlhdCI6MTc3MzY5MzAzMiwiZXhwIjoxNzc2Mjg1MDMyfQ.2HlcFPBmxqmHbdYQE9LjZ45mYvWbuK9Y5Kb1cJ9EUIc
+Authorization: Bearer YOUR_API_TOKEN_HERE
+
 {
     "question": "How can I save more money this month?"
 }

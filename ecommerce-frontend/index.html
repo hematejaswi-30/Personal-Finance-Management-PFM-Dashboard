@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReviewSync - Unified Inbox</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #0a0c10;
+    --bg-card: #12151c;
+    --bg-card-hover: #191d26;
+    --border: #222631;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.2);
+    
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.1);
+    --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+  
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Sidebar */
+  aside {
+    width: 250px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .logo {
+    font-size: 20px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a5b4fc, #6366f1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 40px;
+  }
+  .nav-item {
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-item:hover, .nav-item.active {
+    background: var(--bg-card-hover);
+    color: var(--text-main);
+  }
+  .nav-item.active {
+    background: var(--accent-glow);
+    color: var(--accent);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+
+  /* Main Area */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+  header {
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-title h1 { font-size: 24px; font-weight: 700; }
+  .header-title p { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
+  
+  .stats {
+    display: flex;
+    gap: 16px;
+  }
+  .stat-badge {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* Content area (Split layout) */
+  .workspace {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .review-list {
+    flex: 1;
+    max-width: 500px;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .review-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+  }
+  .review-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .review-card.active {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+  }
+
+  .review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .user-info h4 { font-size: 15px; font-weight: 600; }
+  .user-info p { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .stars { color: #f59e0b; font-size: 14px; letter-spacing: 2px;}
+
+  .review-text {
+    font-size: 14px;
+    color: #e2e8f0;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag { 
+    padding: 4px 10px; 
+    border-radius: 6px; 
+    font-size: 11px; 
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tag.danger { background: var(--danger-bg); color: var(--danger); }
+  .tag.warning { background: var(--warning-bg); color: var(--warning); }
+  .tag.success { background: var(--success-bg); color: var(--success); }
+  .tag.topic { background: #1e293b; color: #cbd5e1; }
+  .tag.platform { border: 1px solid var(--border); background: #0f172a; color: white;}
+
+  /* AI Details Panel */
+  .ai-panel {
+    flex: 1;
+    padding: 32px;
+    background: #0d1017;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .empty-state {
+    margin: auto;
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  .full-review-header { margin-bottom: 24px; }
+  .full-review-header h2 { font-size: 20px; margin-bottom: 8px; }
+  .full-review-body {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-size: 15px;
+    line-height: 1.6;
+    color: #f1f5f9;
+    margin-bottom: 32px;
+  }
+
+  .ai-action-box {
+    background: linear-gradient(145deg, #18182b, #121420);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-action-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  .ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px;}
+  .ai-header svg { color: var(--accent); width: 20px; }
+  .ai-header h3 { font-size: 16px; font-weight: 600; color: #e0e7ff; }
+
+  .draft-textarea {
+    width: 100%;
+    background: #0f111a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    color: #e2e8f0;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 150px;
+    margin-bottom: 16px;
+    transition: 0.2s;
+  }
+  .draft-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .btn-row { display: flex; gap: 12px; justify-content: flex-end; }
+  .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+  }
+  .btn-ghost { background: transparent; color: var(--text-muted); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.05); color: white; }
+  
+  .btn-primary { 
+    background: var(--accent); 
+    color: white; 
+    box-shadow: 0 4px 12px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    background: #4f46e5;
+    transform: translateY(-1px);
+  }
+
+  /* Animations */
+  @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade { animation: fade 0.4s ease forwards; }
+
+</style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside>
+    <div class="logo">ReviewSync AI</div>
+    <div class="nav-item active">📬 Unified Inbox</div>
+    <div class="nav-item">📊 Sentiment Analytics</div>
+    <div class="nav-item">⚙️ Integrations</div>
+    <div style="flex:1"></div>
+    <div class="nav-item"><span class="dot" style="background:#10b981"></span> System Online</div>
+  </aside>
+
+  <!-- Main Area -->
+  <main>
+    <header>
+      <div class="header-title">
+        <h1>Inbox Needs Attention</h1>
+        <p>You have 3 reviews awaiting your approval on AI drafts.</p>
+      </div>
+      <div class="stats">
+        <div class="stat-badge"><span class="dot" style="background:var(--danger)"></span> Urgent: 1</div>
+        <div class="stat-badge"><span class="dot" style="background:var(--warning)"></span> Pending Drafts: 3</div>
+      </div>
+    </header>
+
+    <div class="workspace">
+      
+      <!-- List -->
+      <div class="review-list">
+        
+        <!-- Review 1 -->
+        <div class="review-card active" onclick="loadReview(1)">
+          <div class="review-header">
+            <div class="user-info">
+              <h4>Sarah Jenkins</h4>
+              <p>2 hours ago</p>
+            </div>
+            <div class="stars">★☆☆☆☆</div>
+          </div>
+          <p class="review-text">The product arrived completely shattered. The packaging was terrible and I need a refund immediately! This is ridiculous.</p>
+          <div class="tags">
+            <span class="tag platform">Amazon</span>
+            <span class="tag danger">Negative</span>
+            <span class="tag topic">Packaging</span>
+            <span class="tag topic">Refund</span>
+          </div>
+        </div>
+
+        <!-- Review 2 -->
+        <div class="review-card" onclick="loadReview(2)">
+          <div class="review-header">
+            <div class="user-info">
+              <h4>Mark Robinson</h4>
+              <p>5 hours ago</p>
+            </div>
+            <div class="stars">★★★☆☆</div>
+          </div>
+          <p class="review-text">The quality is decently good but it took almost 3 weeks to arrive. The tracking number didn't update either.</p>
+          <div class="tags">
+            <span class="tag platform">Shopify</span>
+            <span class="tag warning">Neutral</span>
+            <span class="tag topic">Shipping</span>
+          </div>
+        </div>
+
+        <!-- Review 3 -->
+        <div class="review-card" onclick="loadReview(3)">
+          <div class="review-header">
+            <div class="user-info">
+              <h4>Emily D.</h4>
+              <p>1 day ago</p>
+            </div>
+            <div class="stars">★★★★★</div>
+          </div>
+          <p class="review-text">Absolutely love this item! Fits perfectly and looks exactly like the pictures. Will definitely be buying more from this brand.</p>
+          <div class="tags">
+            <span class="tag platform">Trustpilot</span>
+            <span class="tag success">Positive</span>
+            <span class="tag topic">Quality</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- AI Detail Panel -->
+      <div class="ai-panel" id="detail-panel">
+        <div class="animate-fade">
+          <div class="full-review-header">
+            <div class="tags" style="margin-bottom:12px;">
+              <span class="tag platform">Amazon</span>
+              <span class="tag danger">Negative</span>
+              <span class="tag topic">Packaging</span>
+              <span class="tag danger" style="background:#7f1d1d; border:1px solid #dc2626;">URGENT PRIORITY</span>
+            </div>
+            <h2>Sarah Jenkins</h2>
+            <p style="color:var(--text-muted); font-size:13px;">★☆☆☆☆ · Posted 2 hours ago</p>
+          </div>
+          
+          <div class="full-review-body">
+            "The product arrived completely shattered. The packaging was terrible and I need a refund immediately! This is ridiculous."
+          </div>
+
+          <div class="ai-action-box">
+            <div class="ai-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <h3>AI Agent Drafted Reply</h3>
+            </div>
+            
+            <p style="font-size:12px; color:#cbd5e1; margin-bottom:12px;">
+              <strong style="color:var(--warning)">Insight:</strong> Detected frustration regarding packaging and refund logistics. Adopted an empathetic and urgent tone.
+            </p>
+
+            <textarea class="draft-textarea" id="draft-text">Hi Sarah,
+
+I am so incredibly sorry to hear that your order arrived shattered! This is certainly not the standard of quality or packaging we aim for. 
+
+I entirely understand your frustration. I have immediately processed a full refund to your original payment method, which should reflect in 3-5 business days. You do not need to return the broken item to us. 
+
+We are currently investigating our packaging process to ensure this does not happen again. If there is anything else I can do to make this right, please let me know. 
+
+Best regards, 
+Customer Success Team</textarea>
+
+            <div class="btn-row">
+             <button class="btn btn-ghost" onclick="alert('Regenerating new draft via Gemini API...')">↻ Regenerate</button>
+             <button class="btn btn-primary" onclick="approve()">✨ Approve & Auto-Publish</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    const reviewsData = {
+      1: {
+        name: "Sarah Jenkins",
+        stars: "★☆☆☆☆",
+        time: "2 hours ago",
+        content: '"The product arrived completely shattered. The packaging was terrible and I need a refund immediately! This is ridiculous."',
+        tagsHtml: `<span class="tag platform">Amazon</span><span class="tag danger">Negative</span><span class="tag topic">Packaging</span><span class="tag danger" style="background:#7f1d1d; border:1px solid #dc2626;">URGENT PRIORITY</span>`,
+        draft: "Hi Sarah,\n\nI am so incredibly sorry to hear that your order arrived shattered! This is certainly not the standard of quality or packaging we aim for.\n\nI entirely understand your frustration. I have immediately processed a full refund to your original payment method, which should reflect in 3-5 business days. You do not need to return the broken item to us.\n\nWe are currently investigating our packaging process to ensure this does not happen again. If there is anything else I can do to make this right, please let me know.\n\nBest regards,\nCustomer Success Team",
+        insight: '<strong style="color:var(--warning)">Insight:</strong> Detected frustration regarding packaging and refund logistics. Adopted empathetic and urgent tone.'
+      },
+      2: {
+        name: "Mark Robinson",
+        stars: "★★★☆☆",
+        time: "5 hours ago",
+        content: '"The quality is decently good but it took almost 3 weeks to arrive. The tracking number didn\'t update either."',
+        tagsHtml: `<span class="tag platform">Shopify</span><span class="tag warning">Neutral</span><span class="tag topic">Shipping</span>`,
+        draft: "Hi Mark,\n\nThank you for leaving a review! We're glad to hear you are enjoying the quality of the product.\n\nHowever, I apologize for the delay you experienced with shipping and the lack of tracking updates. We are currently working with our logistics partners to improve delivery times and tracking accuracy. \n\nWe appreciate your patience and your feedback, which helps us improve. \n\nBest,\nCustomer Success Team",
+        insight: '<strong style="color:var(--warning)">Insight:</strong> Addressed shipping delay gracefully while acknowledging product praise.'
+      },
+      3: {
+        name: "Emily D.",
+        stars: "★★★★★",
+        time: "1 day ago",
+        content: '"Absolutely love this item! Fits perfectly and looks exactly like the pictures. Will definitely be buying more from this brand."',
+        tagsHtml: `<span class="tag platform">Trustpilot</span><span class="tag success">Positive</span><span class="tag topic">Quality</span>`,
+        draft: "Hi Emily,\n\nWow, thank you so much for the 5-star review! We are absolutely thrilled to hear that you love the item and that it fits perfectly.\n\nWe can't wait to welcome you back for your next purchase. If you ever need help with sizing or recommendations, just reach out! \n\nWarmly,\nCustomer Success Team",
+        insight: '<strong style="color:var(--success)">Insight:</strong> Excellent sentiment detected. Kept reply enthusiastic and appreciative to build brand loyalty.'
+      }
+    };
+
+    function loadReview(id) {
+      document.querySelectorAll('.review-card').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const data = reviewsData[id];
+      const panel = document.getElementById('detail-panel');
+      
+      panel.innerHTML = `
+        <div class="animate-fade">
+          <div class="full-review-header">
+            <div class="tags" style="margin-bottom:12px;">
+              ${data.tagsHtml}
+            </div>
+            <h2>${data.name}</h2>
+            <p style="color:var(--text-muted); font-size:13px;">${data.stars} · Posted ${data.time}</p>
+          </div>
+          
+          <div class="full-review-body">
+            ${data.content}
+          </div>
+
+          <div class="ai-action-box">
+            <div class="ai-header">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+              <h3>AI Agent Drafted Reply</h3>
+            </div>
+            
+            <p style="font-size:12px; color:#cbd5e1; margin-bottom:12px;">
+              ${data.insight}
+            </p>
+
+            <textarea class="draft-textarea" id="draft-text">${data.draft}</textarea>
+
+            <div class="btn-row">
+             <button class="btn btn-ghost" onclick="alert('Regenerating new draft via Gemini API...')">↻ Regenerate</button>
+             <button class="btn btn-primary" onclick="approve()">✨ Approve & Auto-Publish</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function approve() {
+      const btn = event.currentTarget;
+      btn.innerHTML = `✔️ Published!`;
+      btn.style.background = '#10b981';
+      setTimeout(() => {
+        alert("Success! The AI's drafted response was published back to the origin platform via API.");
+      }, 300);
+    }
+  </script>
+</body>
+</html>
