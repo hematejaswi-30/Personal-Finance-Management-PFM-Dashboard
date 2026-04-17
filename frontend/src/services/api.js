@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'https://niveshai-api.onrender.com/api';
+const API_URL = https://personal-finance-management-pfm-dashboard.onrender.com
 // Create axios instance
 const api = axios.create({
     baseURL: API_URL,
