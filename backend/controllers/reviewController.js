@@ -25,10 +25,10 @@ const draftReply = async (req, res) => {
         if (review.userId.toString() !== req.user._id.toString()) return res.status(401).json({ message: 'Not authorized' });
 
         if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'paste_your_groq_key_here') {
-            return res.json({ 
-                success: true, 
-                draft: "🚨 Your AI is currently offline. Please paste your actual Groq API Key into the backend/.env file to generate replies." 
-            });
+            const offlineMessage = "🚨 Your AI is currently offline on the live server. Please add GROQ_API_KEY to your Render Environment Variables and trigger a Manual Deploy.";
+            review.aiDraft = offlineMessage;
+            await review.save();
+            return res.json({ success: true, draft: offlineMessage });
         }
 
         const systemPrompt = `You are an expert customer service AI representing an Ecommerce Brand.
@@ -57,6 +57,8 @@ Do NOT include placeholders like [Your Name] or [Company Name], just write the r
 
         res.json({ success: true, draft });
     } catch (error) {
+        review.aiDraft = `❌ AI Error: ${error.message}. (If you just added the key on Render, you MUST click 'Manual Deploy' for it to take effect!)`;
+        await review.save();
         res.status(500).json({ success: false, message: error.message });
     }
 };

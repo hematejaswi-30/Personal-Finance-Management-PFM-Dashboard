@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
-import axios from 'axios';
+import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const AIAdvisor = () => {
@@ -47,11 +47,7 @@ What would you like to know about your finances today?`
         setLoading(true);
 
         try {
-            const res = await axios.post(
-                'http://localhost:5000/api/ai/ask',
-                { question: userQuestion },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
+            const res = await api.post('/ai/ask', { question: userQuestion });
             setMessages(prev => [...prev, {
                 role: 'ai',
                 text: res.data.answer
