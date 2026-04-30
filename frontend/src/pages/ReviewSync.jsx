@@ -63,12 +63,12 @@ const ReviewSync = () => {
         <div className="page-layout">
             <Sidebar />
             <div className="main-content">
-                <div style={{
+                <div className="header-container fade-in" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     marginBottom: '28px'
-                }} className="fade-in">
+                }}>
                     <div>
                         <h1 style={{
                             fontFamily: 'Syne, sans-serif',
@@ -94,12 +94,7 @@ const ReviewSync = () => {
                     </button>
                 </div>
 
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '16px',
-                    marginBottom: '24px'
-                }} className="fade-in">
+                <div className="grid-3 fade-in" style={{ marginBottom: '24px' }}>
                     <div className="card" style={{ textAlign: 'center', padding: '20px' }}>
                         <div style={{ fontSize: '28px', fontWeight: '800', fontFamily: 'Syne, sans-serif', color: 'var(--text-primary)' }}>{stats.total}</div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Reviews</div>
@@ -133,7 +128,7 @@ const ReviewSync = () => {
                                     opacity: review.status === 'replied' ? 0.6 : 1
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <div className="header-container" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                             <span className="badge badge-purple">{review.platform}</span>
                                             <span style={{ color: 'var(--text-primary)', fontWeight: '600', fontSize: '14px' }}>{review.author}</span>
                                             <span style={{ color: 'var(--accent-yellow)', letterSpacing: '2px', fontSize: '12px' }}>

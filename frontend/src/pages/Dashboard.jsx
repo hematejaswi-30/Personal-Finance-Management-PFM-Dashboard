@@ -134,12 +134,12 @@ const Dashboard = () => {
             <div className="main-content">
 
                 {/* Header */}
-                <div style={{
+                <div className="header-container fade-in" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'flex-start',
                     marginBottom: '28px'
-                }} className="fade-in">
+                }}>
                     <div>
                         <h1 style={{
                             fontFamily: 'Syne, sans-serif',
@@ -165,7 +165,7 @@ const Dashboard = () => {
                             })}
                         </p>
                     </div>
-                    <div style={{ display: 'flex', gap: '10px' }}>
+                    <div className="header-actions">
                         <button
                             onClick={() => setShowAddAccount(true)}
                             className="btn-secondary"
@@ -186,12 +186,7 @@ const Dashboard = () => {
                 {error && <div className="error-msg">{error}</div>}
 
                 {/* Stats Cards */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(4, 1fr)',
-                    gap: '14px',
-                    marginBottom: '20px'
-                }} className="fade-in">
+                <div className="grid-4 fade-in" style={{ marginBottom: '20px' }}>
                     {[
                         {
                             label: 'Total Balance',
@@ -276,11 +271,7 @@ const Dashboard = () => {
                                 This month
                             </span>
                         </div>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gap: '16px'
-                        }}>
+                        <div className="grid-2">
                             {budgetSummary.map((budget, i) => (
                                 <div key={i}>
                                     <div style={{
@@ -370,11 +361,7 @@ const Dashboard = () => {
                             No accounts yet — add one to get started!
                         </div>
                     ) : (
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(2, 1fr)',
-                            gap: '12px'
-                        }}>
+                        <div className="grid-2">
                             {accounts.map((account) => (
                                 <div key={account._id} style={{
                                     background: 'var(--bg-tertiary)',
@@ -483,12 +470,7 @@ const Dashboard = () => {
                                     required
                                 />
                             </div>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '12px',
-                                marginBottom: '14px'
-                            }}>
+                            <div className="grid-2" style={{ marginBottom: '14px' }}>
                                 <div>
                                     <label className="label">Amount (₹)</label>
                                     <input className="input" type="number"
@@ -605,12 +587,7 @@ const Dashboard = () => {
                                     required
                                 />
                             </div>
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '12px',
-                                marginBottom: '14px'
-                            }}>
+                            <div className="grid-2" style={{ marginBottom: '14px' }}>
                                 <div>
                                     <label className="label">Type</label>
                                     <select className="input"

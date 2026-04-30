@@ -64,12 +64,7 @@ const Analytics = () => {
                 </div>
 
                 {/* Summary Stats */}
-                <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '14px',
-                    marginBottom: '20px'
-                }} className="fade-in">
+                <div className="grid-3 fade-in" style={{ marginBottom: '20px' }}>
                     {[
                         {
                             label: 'Total Income',

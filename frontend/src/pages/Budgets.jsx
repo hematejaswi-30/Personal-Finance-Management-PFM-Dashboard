@@ -64,12 +64,12 @@ const Budgets = () => {
         <div className="page-layout">
             <Sidebar />
             <div className="main-content">
-                <div style={{
+                <div className="header-container fade-in" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     marginBottom: '28px'
-                }} className="fade-in">
+                }}>
                     <div>
                         <h1 style={{
                             fontFamily: 'Syne, sans-serif',
@@ -99,12 +99,7 @@ const Budgets = () => {
 
                 {/* Budget Summary */}
                 {summary.length > 0 && (
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(2, 1fr)',
-                        gap: '14px',
-                        marginBottom: '20px'
-                    }} className="fade-in">
+                    <div className="grid-2 fade-in" style={{ marginBottom: '20px' }}>
                         {summary.map((b, i) => (
                             <div key={i} className="card">
                                 <div style={{

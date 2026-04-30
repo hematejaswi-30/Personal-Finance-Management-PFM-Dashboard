@@ -51,12 +51,12 @@ const Transactions = () => {
         <div className="page-layout">
             <Sidebar />
             <div className="main-content">
-                <div style={{
+                <div className="header-container fade-in" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     marginBottom: '28px'
-                }} className="fade-in">
+                }}>
                     <div>
                         <h1 style={{
                             fontFamily: 'Syne, sans-serif',
@@ -112,7 +112,7 @@ const Transactions = () => {
                                         required
                                     />
                                 </div>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '14px' }}>
+                                <div className="grid-2" style={{ marginBottom: '14px' }}>
                                     <div>
                                         <label className="label">Amount (₹)</label>
                                         <input className="input" type="number"

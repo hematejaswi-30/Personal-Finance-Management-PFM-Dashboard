@@ -55,12 +55,12 @@ const Income = () => {
         <div className="page-layout">
             <Sidebar />
             <div className="main-content">
-                <div style={{
+                <div className="header-container fade-in" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center',
+                    alignItems: 'flex-start',
                     marginBottom: '28px'
-                }} className="fade-in">
+                }}>
                     <div>
                         <h1 style={{
                             fontFamily: 'Syne, sans-serif',

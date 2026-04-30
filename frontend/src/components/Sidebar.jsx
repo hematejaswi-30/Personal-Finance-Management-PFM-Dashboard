@@ -19,7 +19,7 @@ const Sidebar = () => {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div style={{
+        <div className="sidebar-container" style={{
             width: '240px',
             background: 'var(--bg-secondary)',
             borderRight: '0.5px solid var(--border)',
@@ -32,7 +32,7 @@ const Sidebar = () => {
             zIndex: 40
         }}>
             {/* Logo */}
-            <div style={{
+            <div className="sidebar-logo-section" style={{
                 padding: '24px 20px',
                 borderBottom: '0.5px solid var(--border)'
             }}>
@@ -71,8 +71,8 @@ const Sidebar = () => {
             </div>
 
             {/* Navigation */}
-            <nav style={{ flex: 1, padding: '16px 0', overflowY: 'auto' }}>
-                <div style={{
+            <nav className="sidebar-nav" style={{ flex: 1, padding: '16px 0', overflowY: 'auto' }}>
+                <div className="sidebar-section-title" style={{
                     fontSize: '10px',
                     color: 'var(--text-muted)',
                     textTransform: 'uppercase',
@@ -84,6 +84,7 @@ const Sidebar = () => {
                     <Link
                         key={item.path}
                         to={item.path}
+                        className={`sidebar-link ${isActive(item.path) ? 'active' : ''}`}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -103,25 +104,28 @@ const Sidebar = () => {
                             transition: 'all 0.2s'
                         }}
                     >
-                        <span style={{ fontSize: '14px', width: '18px' }}>
+                        <span className="icon" style={{ fontSize: '14px', width: '18px' }}>
                             {item.icon}
                         </span>
                         {item.label}
                     </Link>
                 ))}
 
-                <div style={{
+                <div className="sidebar-section-title" style={{
                     fontSize: '10px',
                     color: 'var(--text-muted)',
                     textTransform: 'uppercase',
-                    letterSpacing: '1.2px',
-                    padding: '16px 20px 6px'
-                }}>AI Features</div>
+                    letterSpacing: '1px',
+                    margin: '16px 20px 8px 20px'
+                }}>
+                    AI Features
+                </div>
 
                 {navItems.slice(5).map((item) => (
                     <Link
                         key={item.path}
                         to={item.path}
+                        className={`sidebar-link ${isActive(item.path) ? 'active' : ''}`}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -141,7 +145,7 @@ const Sidebar = () => {
                             transition: 'all 0.2s'
                         }}
                     >
-                        <span style={{ fontSize: '14px', width: '18px' }}>
+                        <span className="icon" style={{ fontSize: '14px', width: '18px' }}>
                             {item.icon}
                         </span>
                         {item.label}
@@ -159,7 +163,7 @@ const Sidebar = () => {
             </nav>
 
             {/* User Profile */}
-            <div style={{
+            <div className="sidebar-profile-section" style={{
                 padding: '16px 20px',
                 borderTop: '0.5px solid var(--border)'
             }}>

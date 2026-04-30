@@ -39,11 +39,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 const Chart = ({ categoryData, monthlyData }) => {
     return (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '16px'
-        }}>
+        <div className="grid-2">
             {/* Bar Chart — Monthly Summary */}
             <div className="card">
                 <div style={{
@@ -146,7 +142,7 @@ const Chart = ({ categoryData, monthlyData }) => {
                         No expenses yet
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <div className="header-container" style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                         <ResponsiveContainer width="50%" height={180}>
                             <PieChart>
                                 <Pie

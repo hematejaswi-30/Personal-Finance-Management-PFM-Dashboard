@@ -238,3 +238,104 @@ select.input option { background: var(--bg-tertiary); }
   font-size: 13px;
   margin-bottom: 16px;
 }
+
+/* Responsive Grid Utilities */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 16px;
+    padding-bottom: 90px; /* space for bottom nav */
+  }
+  
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Sidebar Mobile Layout (Bottom Tab Bar) */
+  .sidebar-container {
+    width: 100% !important;
+    height: 70px !important;
+    top: auto !important;
+    bottom: 0 !important;
+    border-right: none !important;
+    border-top: 0.5px solid var(--border) !important;
+    flex-direction: row !important;
+    z-index: 50 !important;
+    background: rgba(15, 17, 24, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+  }
+  
+  .sidebar-logo-section, 
+  .sidebar-profile-section, 
+  .sidebar-section-title {
+    display: none !important;
+  }
+  
+  .sidebar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    padding: 0 !important;
+    align-items: center !important;
+    width: 100% !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .sidebar-nav::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .sidebar-link {
+    flex-direction: column !important;
+    justify-content: center !important;
+    padding: 8px !important;
+    border-left: none !important;
+    border-top: 2px solid transparent;
+    min-width: 75px;
+    font-size: 10px !important;
+    gap: 4px !important;
+    height: 100%;
+  }
+  
+  .sidebar-link.active {
+    border-left: none !important;
+    border-top-color: currentColor !important;
+    background: transparent !important;
+  }
+  
+  .sidebar-link span.icon {
+    font-size: 18px !important;
+    width: auto !important;
+    text-align: center;
+  }
+  
+  .sidebar-link span.badge {
+    display: none !important; /* Hide badges on mobile to save space */
+  }
+
+  /* Header adjustments */
+  .header-container {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 16px;
+  }
+  
+  .header-actions {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+  .header-actions > * {
+    flex: 1;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+}
