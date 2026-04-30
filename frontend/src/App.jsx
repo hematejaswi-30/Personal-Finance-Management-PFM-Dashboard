@@ -9,7 +9,7 @@ import Accounts from './pages/Accounts';
 import Budgets from './pages/Budgets';
 import Analytics from './pages/Analytics';
 import Income from './pages/Income';
-import ReviewSync from './pages/ReviewSync';
+
 
 const ProtectedRoute = ({ children }) => {
     const { user } = useAuth();
@@ -53,9 +53,6 @@ const AppRoutes = () => {
             } />
             <Route path="/ai-advisor" element={
                 <ProtectedRoute><AIAdvisor /></ProtectedRoute>
-            } />
-            <Route path="/reviews" element={
-                <ProtectedRoute><ReviewSync /></ProtectedRoute>
             } />
             <Route path="*" element={<Navigate to="/login" />} />
         </Routes>

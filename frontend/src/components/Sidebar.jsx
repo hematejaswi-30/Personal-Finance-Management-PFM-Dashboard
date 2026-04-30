@@ -12,7 +12,6 @@ const Sidebar = () => {
         { path: '/accounts', label: 'Accounts', icon: '◻' },
         { path: '/budgets', label: 'Budgets', icon: '◎' },
         { path: '/ai-advisor', label: 'AI Advisor', icon: '✦', badge: 'AI' },
-        { path: '/reviews', label: 'ReviewSync', icon: '✉', badge: 'NEW' },
         { path: '/analytics', label: 'Analytics', icon: '⬡' },
     ];
 
