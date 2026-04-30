@@ -8,9 +8,11 @@ const Sidebar = () => {
     const navItems = [
         { path: '/dashboard', label: 'Overview', icon: '◈' },
         { path: '/transactions', label: 'Transactions', icon: '⇄' },
+        { path: '/income', label: 'Income', icon: '↓' },
         { path: '/accounts', label: 'Accounts', icon: '◻' },
         { path: '/budgets', label: 'Budgets', icon: '◎' },
         { path: '/ai-advisor', label: 'AI Advisor', icon: '✦', badge: 'AI' },
+        { path: '/reviews', label: 'ReviewSync', icon: '✉', badge: 'NEW' },
         { path: '/analytics', label: 'Analytics', icon: '⬡' },
     ];
 
@@ -78,7 +80,7 @@ const Sidebar = () => {
                     padding: '8px 20px 6px'
                 }}>Main</div>
 
-                {navItems.slice(0, 4).map((item) => (
+                {navItems.slice(0, 5).map((item) => (
                     <Link
                         key={item.path}
                         to={item.path}
@@ -116,7 +118,7 @@ const Sidebar = () => {
                     padding: '16px 20px 6px'
                 }}>AI Features</div>
 
-                {navItems.slice(4).map((item) => (
+                {navItems.slice(5).map((item) => (
                     <Link
                         key={item.path}
                         to={item.path}

@@ -8,6 +8,8 @@ import Transactions from './pages/Transactions';
 import Accounts from './pages/Accounts';
 import Budgets from './pages/Budgets';
 import Analytics from './pages/Analytics';
+import Income from './pages/Income';
+import ReviewSync from './pages/ReviewSync';
 
 const ProtectedRoute = ({ children }) => {
     const { user } = useAuth();
@@ -37,6 +39,9 @@ const AppRoutes = () => {
             <Route path="/transactions" element={
                 <ProtectedRoute><Transactions /></ProtectedRoute>
             } />
+            <Route path="/income" element={
+                <ProtectedRoute><Income /></ProtectedRoute>
+            } />
             <Route path="/accounts" element={
                 <ProtectedRoute><Accounts /></ProtectedRoute>
             } />
@@ -48,6 +53,9 @@ const AppRoutes = () => {
             } />
             <Route path="/ai-advisor" element={
                 <ProtectedRoute><AIAdvisor /></ProtectedRoute>
+            } />
+            <Route path="/reviews" element={
+                <ProtectedRoute><ReviewSync /></ProtectedRoute>
             } />
             <Route path="*" element={<Navigate to="/login" />} />
         </Routes>

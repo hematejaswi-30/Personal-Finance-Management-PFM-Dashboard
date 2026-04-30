@@ -1,7 +1,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'https://personal-finance-management-pfm-dashboard.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 // Create axios instance
 const api = axios.create({
     baseURL: API_URL,
@@ -44,5 +44,11 @@ export const addBudget = (data) => api.post('/budgets', data);
 export const updateBudget = (id, data) => api.put(`/budgets/${id}`, data);
 export const deleteBudget = (id) => api.delete(`/budgets/${id}`);
 export const getBudgetSummary = (month) => api.get(`/budgets/summary?month=${month}`);
+
+// REVIEWSYNC
+export const getReviews = () => api.get('/reviews');
+export const seedReviews = () => api.post('/reviews/seed');
+export const draftReviewReply = (id) => api.post(`/reviews/${id}/draft`);
+export const approveReviewReply = (id) => api.put(`/reviews/${id}/reply`);
 
 export default api;
