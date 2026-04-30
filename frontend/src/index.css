@@ -247,7 +247,7 @@ select.input option { background: var(--bg-tertiary); }
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 65px; /* space for mini vertical sidebar */
+    margin-left: 45px; /* space for mini vertical sidebar */
     padding: 16px;
   }
   
@@ -257,7 +257,7 @@ select.input option { background: var(--bg-tertiary); }
   
   /* Sidebar Mobile Layout (Mini Vertical Sidebar) */
   .sidebar-container {
-    width: 65px !important;
+    width: 45px !important;
     height: 100vh !important;
     top: 0 !important;
     left: 0 !important;
