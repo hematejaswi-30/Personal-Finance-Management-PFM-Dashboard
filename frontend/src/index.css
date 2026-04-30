@@ -247,72 +247,62 @@ select.input option { background: var(--bg-tertiary); }
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0;
+    margin-left: 65px; /* space for mini vertical sidebar */
     padding: 16px;
-    padding-bottom: 90px; /* space for bottom nav */
   }
   
   .grid-2, .grid-3, .grid-4 {
     grid-template-columns: 1fr;
   }
   
-  /* Sidebar Mobile Layout (Bottom Tab Bar) */
+  /* Sidebar Mobile Layout (Mini Vertical Sidebar) */
   .sidebar-container {
-    width: 100% !important;
-    height: 70px !important;
-    top: auto !important;
-    bottom: 0 !important;
-    border-right: none !important;
-    border-top: 0.5px solid var(--border) !important;
-    flex-direction: row !important;
-    z-index: 50 !important;
-    background: rgba(15, 17, 24, 0.95) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
+    width: 65px !important;
+    height: 100vh !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: auto !important;
+    flex-direction: column !important;
+    border-right: 0.5px solid var(--border) !important;
+    border-top: none !important;
   }
   
   .sidebar-logo-section, 
   .sidebar-profile-section, 
-  .sidebar-section-title {
+  .sidebar-section-title,
+  .sidebar-label {
     display: none !important;
   }
   
   .sidebar-nav {
     display: flex !important;
-    flex-direction: row !important;
-    overflow-x: auto !important;
-    padding: 0 !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 16px 0 !important;
     align-items: center !important;
-    width: 100% !important;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  .sidebar-nav::-webkit-scrollbar {
-    display: none;
   }
   
   .sidebar-link {
     flex-direction: column !important;
     justify-content: center !important;
-    padding: 8px !important;
-    border-left: none !important;
-    border-top: 2px solid transparent;
-    min-width: 75px;
-    font-size: 10px !important;
-    gap: 4px !important;
-    height: 100%;
+    align-items: center !important;
+    padding: 12px 0 !important;
+    border-top: none !important;
+    border-left: 2px solid transparent !important;
+    width: 100% !important;
+    min-width: auto;
   }
   
   .sidebar-link.active {
-    border-left: none !important;
-    border-top-color: currentColor !important;
-    background: transparent !important;
+    border-left-color: currentColor !important;
+    background: var(--bg-hover) !important;
   }
   
   .sidebar-link span.icon {
-    font-size: 18px !important;
+    font-size: 20px !important;
     width: auto !important;
-    text-align: center;
+    margin: 0 !important;
   }
   
   .sidebar-link span.badge {

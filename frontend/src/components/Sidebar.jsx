@@ -107,7 +107,7 @@ const Sidebar = () => {
                         <span className="icon" style={{ fontSize: '14px', width: '18px' }}>
                             {item.icon}
                         </span>
-                        {item.label}
+                        <span className="sidebar-label">{item.label}</span>
                     </Link>
                 ))}
 
@@ -148,7 +148,7 @@ const Sidebar = () => {
                         <span className="icon" style={{ fontSize: '14px', width: '18px' }}>
                             {item.icon}
                         </span>
-                        {item.label}
+                        <span className="sidebar-label">{item.label}</span>
                         {item.badge && (
                             <span className="badge badge-green" style={{
                                 fontSize: '9px',
