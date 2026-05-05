@@ -70,7 +70,7 @@ const Register = () => {
                         fontWeight: '800',
                         color: 'var(--text-primary)',
                         letterSpacing: '-0.5px'
-                    }}>NiveshAI</h1>
+                    }}>NiveshView</h1>
                     <p style={{
                         color: 'var(--text-muted)',
                         fontSize: '12px',

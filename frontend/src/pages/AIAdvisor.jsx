@@ -8,7 +8,7 @@ const AIAdvisor = () => {
     const [messages, setMessages] = useState([
         {
             role: 'ai',
-            text: `Namaste! 🙏 I'm your NiveshAI financial advisor. I can help you with:
+            text: `Namaste! 🙏 I'm your NiveshView financial advisor. I can help you with:
 
 - Analyzing your spending patterns
 - Suggesting ways to save more

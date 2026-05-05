@@ -158,7 +158,7 @@ const Sidebar = () => {
                             <circle cx="28" cy="12" r="3"   fill="#38bdf8"/>
                         </svg>
                         <div>
-                            <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>NiveshAI</div>
+                            <div style={{ fontWeight: 800, fontSize: '18px', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>NiveshView</div>
                             {localStorage.getItem('nivesh-mode') === 'business' && (
                                 <div style={{ fontSize: '8px', fontWeight: '800', color: '#fbbf24', background: 'rgba(251,191,36,0.1)', padding: '1px 5px', borderRadius: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Business Pro</div>
                             )}

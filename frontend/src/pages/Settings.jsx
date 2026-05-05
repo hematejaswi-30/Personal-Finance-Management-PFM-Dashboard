@@ -120,7 +120,7 @@ export default function Settings() {
 
             {/* Danger Zone */}
             <Section title="⚠️ Account Actions">
-                <Row label="Sign Out" sub="Log out of your NiveshAI account">
+                <Row label="Sign Out" sub="Log out of your NiveshView account">
                     <button onClick={logout} style={{ background: 'rgba(244,63,94,0.1)', border: '1px solid rgba(244,63,94,0.25)', borderRadius: '8px', padding: '6px 14px', fontSize: '12px', fontWeight: '700', color: '#f43f5e', cursor: 'pointer' }}>Sign Out</button>
                 </Row>
                 <Row label="Onboarding Guide" sub="Walk through the platform setup again">

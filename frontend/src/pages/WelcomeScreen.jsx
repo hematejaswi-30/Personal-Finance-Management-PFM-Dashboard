@@ -67,7 +67,7 @@ const WelcomeScreen = () => {
                         <circle cx="28" cy="12" r="3"   fill="#38bdf8"/>
                     </svg>
                     <div>
-                        <div style={{ fontFamily: 'Syne,sans-serif', fontSize: '16px', fontWeight: '800', letterSpacing: '-0.3px' }}>NiveshAI</div>
+                        <div style={{ fontFamily: 'Syne,sans-serif', fontSize: '16px', fontWeight: '800', letterSpacing: '-0.3px' }}>NiveshView</div>
                         <div style={{ fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '1.8px', textTransform: 'uppercase' }}>Finance AI</div>
                     </div>
                 </div>
@@ -105,13 +105,13 @@ const WelcomeScreen = () => {
                             <circle cx="28" cy="12" r="3"   fill="#38bdf8"/>
                         </svg>
                         <div>
-                            <div style={{ fontFamily: 'Syne,sans-serif', fontSize: '22px', fontWeight: '800', color: 'white', letterSpacing: '-0.4px' }}>NiveshAI</div>
+                            <div style={{ fontFamily: 'Syne,sans-serif', fontSize: '22px', fontWeight: '800', color: 'white', letterSpacing: '-0.4px' }}>NiveshView</div>
                             <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.45)', letterSpacing: '2px', textTransform: 'uppercase' }}>Your Finance Intelligence</div>
                         </div>
                     </div>
 
                     <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, maxWidth: '520px', marginBottom: '20px' }}>
-                        NiveshAI is your all-in-one AI-powered personal finance dashboard. Track income and expenses, monitor budgets, analyse spending patterns, and get personalised financial advice — all in real time.
+                        NiveshView is your all-in-one AI-powered personal finance dashboard. Track income and expenses, monitor budgets, analyse spending patterns, and get personalised financial advice — all in real time.
                     </p>
 
                     {/* Stats row */}
@@ -236,7 +236,7 @@ const WelcomeScreen = () => {
                 <div className="fade-in" style={{ marginTop: '32px' }}>
                     <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                         <div style={{ fontSize: '10px', color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: '800', marginBottom: '8px' }}>Step 1: Choose Your Experience</div>
-                        <h2 style={{ fontSize: '24px', fontWeight: '800', fontFamily: 'Syne,sans-serif', color: 'var(--text-primary)' }}>How will you use NiveshAI?</h2>
+                        <h2 style={{ fontSize: '24px', fontWeight: '800', fontFamily: 'Syne,sans-serif', color: 'var(--text-primary)' }}>How will you use NiveshView?</h2>
                         <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Select a mode to customise your dashboard tools.</p>
                     </div>
 

@@ -18,7 +18,7 @@ const Reviews = () => {
                 <div style={{ fontSize: '60px', marginBottom: '24px' }}>🏬</div>
                 <h2 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '16px', fontFamily: 'Syne, sans-serif' }}>Unlock Business Pro</h2>
                 <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '32px' }}>
-                    The Reviews and ROI Sentiment Hub is part of the **NiveshAI Business Suite**. Switch to Business Mode to analyze customer feedback and track your brand's growth.
+                    The Reviews and ROI Sentiment Hub is part of the **NiveshView Business Suite**. Switch to Business Mode to analyze customer feedback and track your brand's growth.
                 </p>
                 <button onClick={() => { localStorage.setItem('nivesh-mode', 'business'); window.location.reload(); }} 
                     style={{ padding: '14px 32px', background: 'var(--accent-primary)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 15px rgba(139,92,246,0.3)' }}>

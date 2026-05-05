@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const STEPS = [
-    { id: 1, emoji: '🎉', title: 'Welcome to NiveshAI', sub: 'Your smart personal finance companion' },
+    { id: 1, emoji: '🎉', title: 'Welcome to NiveshView', sub: 'Your smart personal finance companion' },
     { id: 2, emoji: '💳', title: 'Link Your Accounts',   sub: 'Connect your bank accounts to track balances' },
     { id: 3, emoji: '🎯', title: 'Set Budget Goals',     sub: 'Define spending limits by category' },
     { id: 4, emoji: '🚀', title: 'You\'re All Set!',      sub: 'Your financial dashboard is ready' },
@@ -63,7 +63,7 @@ export default function Onboarding() {
                                 {user?.name?.charAt(0).toUpperCase()}
                             </div>
                             <div style={{ fontFamily: '\'Syne\', sans-serif', fontSize: '20px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '6px' }}>Hello, {user?.name?.split(' ')[0]}! 👋</div>
-                            <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>NiveshAI helps you track your income, manage budgets, analyze spending patterns, and get AI-powered financial insights — all in one place.</div>
+                            <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.6' }}>NiveshView helps you track your income, manage budgets, analyze spending patterns, and get AI-powered financial insights — all in one place.</div>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '10px', marginTop: '20px' }}>
                                 {[['📈','Track Income'],['💸','Manage Budgets'],['🤖','AI Insights']].map(([e,l]) => (
                                     <div key={l} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px 8px', textAlign: 'center' }}>
@@ -124,7 +124,7 @@ export default function Onboarding() {
                     <Card style={{ textAlign: 'center', padding: '32px 20px' }}>
                         <div style={{ fontSize: '64px', marginBottom: '16px' }}>🎊</div>
                         <div style={{ fontFamily: '\'Syne\', sans-serif', fontSize: '18px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '10px' }}>You're ready to go!</div>
-                        <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.7', marginBottom: '20px' }}>Your NiveshAI dashboard is configured and ready. Start by adding your first transaction or exploring the AI Advisor for smart financial tips.</div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.7', marginBottom: '20px' }}>Your NiveshView dashboard is configured and ready. Start by adding your first transaction or exploring the AI Advisor for smart financial tips.</div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                             {[
                                 { label: '+ Add Transaction', path: '/dashboard', color: 'var(--accent-purple)' },
@@ -157,7 +157,7 @@ export default function Onboarding() {
             </div>
 
             {/* Logo watermark */}
-            <div style={{ marginTop: '32px', fontSize: '11px', color: 'var(--text-muted)' }}>Powered by <span style={{ color: 'var(--accent-purple)', fontWeight: '700' }}>NiveshAI</span></div>
+            <div style={{ marginTop: '32px', fontSize: '11px', color: 'var(--text-muted)' }}>Powered by <span style={{ color: 'var(--accent-purple)', fontWeight: '700' }}>NiveshView</span></div>
         </div>
     );
 }

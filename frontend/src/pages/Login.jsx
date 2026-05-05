@@ -58,7 +58,7 @@ const Login = () => {
                             <circle cx="28" cy="12" r="2.5" fill="#38bdf8"/>
                         </svg>
                         <div style={{ textAlign: 'left' }}>
-                            <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '20px', fontWeight: '800', color: '#f1f5f9', letterSpacing: '-0.3px' }}>NiveshAI</div>
+                            <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '20px', fontWeight: '800', color: '#f1f5f9', letterSpacing: '-0.3px' }}>NiveshView</div>
                             <div style={{ fontSize: '9px', color: '#334155', letterSpacing: '2px', textTransform: 'uppercase' }}>Finance Intelligence</div>
                         </div>
                     </div>
