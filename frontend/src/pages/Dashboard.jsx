@@ -80,7 +80,8 @@ const SpendingRings = ({ data }) => {
 /* ── Insight Cards ── */
 const makeInsights = (savingsRate, budgets, totalIncome, totalExpenses) => {
     const ins = [];
-    const overBudget = budgets.find(b => b.percentage >= 90);
+    const budgetList = Array.isArray(budgets) ? budgets : [];
+    const overBudget = budgetList.find(b => b.percentage >= 90);
     if (overBudget) ins.push({ emoji: '⚠️', title: `${overBudget.category} budget ${overBudget.percentage}% used!`, sub: 'Action needed', bg: 'linear-gradient(135deg,#7c3aed,#6d28d9)', cta: 'View Budget' });
     if (savingsRate > 20) ins.push({ emoji: '🎯', title: `Savings rate ${savingsRate}% — Great job!`, sub: 'Keep it up', bg: 'linear-gradient(135deg,#059669,#34d399)', cta: 'View Income' });
     if (totalIncome > totalExpenses) ins.push({ emoji: '📈', title: 'Income exceeds expenses', sub: 'Positive cash flow', bg: 'linear-gradient(135deg,#0284c7,#38bdf8)', cta: 'Analytics' });
@@ -144,12 +145,17 @@ const Dashboard = () => {
     };
     useEffect(() => { fetchData(); }, []);
 
-    const totalBalance  = accounts.reduce((s,a) => s + a.balance, 0);
-    const totalIncome   = transactions.filter(t => t.type==='income').reduce((s,t) => s+t.amount, 0);
-    const totalExpenses = transactions.filter(t => t.type==='expense').reduce((s,t) => s+t.amount, 0);
+    // 🛡 Global Defense: Ensure everything is an array before processing
+    const safeAccounts     = Array.isArray(accounts) ? accounts : [];
+    const safeTransactions = Array.isArray(transactions) ? transactions : [];
+    const safeBudgets      = Array.isArray(budgetData) ? budgetData : [];
+
+    const totalBalance  = safeAccounts.reduce((s,a) => s + (a.balance || 0), 0);
+    const totalIncome   = safeTransactions.filter(t => t.type==='income').reduce((s,t) => s+(t.amount || 0), 0);
+    const totalExpenses = safeTransactions.filter(t => t.type==='expense').reduce((s,t) => s+(t.amount || 0), 0);
     const savingsRate   = totalIncome > 0 ? +((( totalIncome - totalExpenses)/totalIncome)*100).toFixed(1) : 0;
     const healthScore   = Math.min(100, Math.round(Math.min(savingsRate*1.5,40) + (totalIncome>totalExpenses?40:(totalIncome/Math.max(totalExpenses,1))*40) + 20));
-    const insights      = makeInsights(savingsRate, budgetData, totalIncome, totalExpenses);
+    const insights      = makeInsights(savingsRate, safeBudgets, totalIncome, totalExpenses);
     const hour          = new Date().getHours();
     const greeting      = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
 
@@ -288,9 +294,9 @@ const Dashboard = () => {
                                     {k.key==='accounts' && (
                                         <div style={{paddingTop:'12px'}}>
                                             <div style={{fontSize:'11px',color:'var(--text-muted)',marginBottom:'10px',fontWeight:'600',textTransform:'uppercase'}}>All Accounts</div>
-                                            {accounts.length===0
+                                            {safeAccounts.length===0
                                                 ? <div style={{fontSize:'12px',color:'var(--text-muted)',textAlign:'center',padding:'12px 0'}}>No accounts yet</div>
-                                                : accounts.map(acc=>(
+                                                : safeAccounts.map(acc=>(
                                                     <div key={acc._id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 0',borderBottom:'1px solid var(--border)'}}>
                                                         <div>
                                                             <div style={{fontSize:'12px',fontWeight:'600',color:'var(--text-primary)'}}>{acc.name}</div>

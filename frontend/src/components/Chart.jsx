@@ -38,6 +38,9 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const Chart = ({ categoryData, monthlyData }) => {
+    const safeCat = Array.isArray(categoryData) ? categoryData : [];
+    const safeMon = Array.isArray(monthlyData) ? monthlyData : [];
+
     return (
         <div className="grid-2">
             {/* Bar Chart — Monthly Summary */}
@@ -57,7 +60,7 @@ const Chart = ({ categoryData, monthlyData }) => {
                         Last 6 months
                     </span>
                 </div>
-                {monthlyData.length === 0 ? (
+                {safeMon.length === 0 ? (
                     <div style={{
                         height: '200px',
                         display: 'flex',
@@ -70,7 +73,7 @@ const Chart = ({ categoryData, monthlyData }) => {
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height={200}>
-                        <BarChart data={monthlyData}
+                        <BarChart data={safeMon}
                             margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                             <CartesianGrid
                                 strokeDasharray="3 3"
@@ -130,7 +133,7 @@ const Chart = ({ categoryData, monthlyData }) => {
                         By category
                     </span>
                 </div>
-                {categoryData.length === 0 ? (
+                {safeCat.length === 0 ? (
                     <div style={{
                         height: '200px',
                         display: 'flex',
@@ -146,15 +149,15 @@ const Chart = ({ categoryData, monthlyData }) => {
                         <ResponsiveContainer width="50%" height={180}>
                             <PieChart>
                                 <Pie
-                                    data={categoryData}
+                                    data={safeCat}
                                     cx="50%"
                                     cy="50%"
                                     innerRadius={45}
                                     outerRadius={75}
-                                    dataKey="value"
+                                    dataKey="total"
                                     strokeWidth={0}
                                 >
-                                    {categoryData.map((entry, index) => (
+                                    {safeCat.map((entry, index) => (
                                         <Cell
                                             key={index}
                                             fill={COLORS[index % COLORS.length]}
@@ -165,7 +168,10 @@ const Chart = ({ categoryData, monthlyData }) => {
                             </PieChart>
                         </ResponsiveContainer>
                         <div style={{ flex: 1 }}>
-                            {categoryData.slice(0, 5).map((entry, index) => (
+                            {safeCat.slice(0, 5).map((entry, index) => {
+                                const name = entry._id || entry.name || 'Other';
+                                const value = entry.total || entry.value || 0;
+                                return (
                                 <div key={index} style={{
                                     display: 'flex',
                                     alignItems: 'center',
@@ -188,9 +194,9 @@ const Chart = ({ categoryData, monthlyData }) => {
                                             fontSize: '11px',
                                             color: 'var(--text-secondary)'
                                         }}>
-                                            {entry.name.length > 12
-                                                ? entry.name.slice(0, 12) + '...'
-                                                : entry.name}
+                                            {name.length > 12
+                                                ? name.slice(0, 12) + '...'
+                                                : name}
                                         </span>
                                     </div>
                                     <span style={{
@@ -198,10 +204,10 @@ const Chart = ({ categoryData, monthlyData }) => {
                                         color: 'var(--text-primary)',
                                         fontWeight: '500'
                                     }}>
-                                        ₹{entry.value.toLocaleString()}
+                                        ₹{value.toLocaleString()}
                                     </span>
                                 </div>
-                            ))}
+                            );})}
                         </div>
                     </div>
                 )}
