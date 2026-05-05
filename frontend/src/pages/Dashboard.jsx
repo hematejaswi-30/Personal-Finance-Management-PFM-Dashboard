@@ -350,7 +350,14 @@ const Dashboard = () => {
                                             <button onClick={()=>navigate('/ai-advisor')} style={{marginTop:'4px',width:'100%',background:'rgba(245,158,11,0.08)',border:'1px solid rgba(245,158,11,0.2)',borderRadius:'8px',padding:'7px',fontSize:'12px',fontWeight:'700',color:'#f59e0b',cursor:'pointer'}}>Full AI Advisor →</button>
                                         </div>
                                     )}
-                                </div            {/* ── Main Dashboard Content Grid ── */}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* ── Main Dashboard Content Grid ── */}
             <div className="dash-main-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '20px', marginBottom: '20px', alignItems: 'start' }}>
                 
                 {/* LEFT COLUMN: Spending & Activity */}
@@ -422,10 +429,6 @@ const Dashboard = () => {
                                 </div>
                             ))
                         }
-                    </div>
-                </div>
-            </div>
-#8b5cf6',fontWeight:'600',cursor:'pointer'}}>+{accounts.length-4} more â†’</span></div>)}
                     </div>
                 </div>
             </div>
