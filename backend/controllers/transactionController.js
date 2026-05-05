@@ -170,8 +170,8 @@ const getByCategory = async (req, res) => {
             summary[cat] = (summary[cat] || 0) + txn.amount;
         });
         const result = Object.entries(summary).map(([name, value]) => ({
-            name,
-            value: +value.toFixed(2)
+            _id: name,
+            total: +value.toFixed(2)
         }));
         res.json(result);
     } catch (error) {
