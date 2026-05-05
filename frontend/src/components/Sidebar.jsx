@@ -25,6 +25,7 @@ const ICONS = {
     lock:         ['M19 11H5a2 2 0 00-2 2v7a2 2 0 002 2h14a2 2 0 002-2v-7a2 2 0 00-2-2z','M7 11V7a5 5 0 0110 0v4'],
     logout:       ['M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4','M16 17l5-5-5-5','M21 12H9'],
     settings:     ['M12 15a3 3 0 100-6 3 3 0 000 6z','M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z'],
+    reviews:      'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z',
 };
 
 const navItems = [
@@ -60,6 +61,7 @@ const Sidebar = () => {
     const { user, logout }     = useAuth();
     const location             = useLocation();
     const [open, setOpen]      = useState(false);
+    const [mode, setMode]      = useState(() => localStorage.getItem('nivesh-mode') || 'personal');
     const triggerRef           = useRef(null);
     const dropdownRef          = useRef(null);
     const [dropPos, setDropPos] = useState({ bottom: 0, left: 0, width: 0 });
@@ -200,6 +202,26 @@ const Sidebar = () => {
                             {item.badge && <span style={{ marginLeft: 'auto', fontSize: '9px', fontWeight: '700', background: 'rgba(52,211,153,0.15)', color: '#34d399', padding: '2px 7px', borderRadius: '10px' }}>{item.badge}</span>}
                         </Link>
                     ))}
+
+                    {mode === 'business' && (
+                        <>
+                            <div className="sidebar-section-title" style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1.4px', padding: '14px 20px 6px', fontWeight: '600' }}>Business</div>
+                            <Link to="/reviews"
+                                className={`sidebar-link ${isActive('/reviews') ? 'active' : ''}`}
+                                style={{
+                                    display: 'flex', alignItems: 'center', gap: '10px',
+                                    padding: '9px 18px', textDecoration: 'none', fontSize: '13px', fontWeight: '500',
+                                    color: isActive('/reviews') ? '#f59e0b' : 'var(--text-muted)',
+                                    background: isActive('/reviews') ? 'rgba(245,158,11,0.08)' : 'transparent',
+                                    borderLeft: isActive('/reviews') ? '2px solid #f59e0b' : '2px solid transparent',
+                                    transition: 'all 0.15s', borderRadius: '0 8px 8px 0',
+                                }}>
+                                <span className="icon" style={{ flexShrink: 0 }}><Icon d={ICONS.reviews} size={14}/></span>
+                                <span className="sidebar-label">Customer Reviews</span>
+                                <span style={{ marginLeft: 'auto', fontSize: '9px', fontWeight: '700', background: 'rgba(245,158,11,0.15)', color: '#f59e0b', padding: '2px 7px', borderRadius: '10px' }}>PRO</span>
+                            </Link>
+                        </>
+                    )}
                 </nav>
 
                 {/* Profile + Settings trigger */}

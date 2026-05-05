@@ -232,24 +232,50 @@ const WelcomeScreen = () => {
                     ))}
                 </div>
 
-                {/* ── Enter Dashboard CTA ── */}
-                <button onClick={() => navigate('/dashboard')} className="fade-in" style={{
-                    width: '100%', padding: '15px',
-                    background: 'linear-gradient(135deg,#7c3aed,#6d28d9)',
-                    color: 'white', border: 'none', borderRadius: '14px',
-                    fontSize: '14px', fontWeight: '700', cursor: 'pointer',
-                    fontFamily: 'DM Sans, sans-serif', letterSpacing: '0.3px',
-                    boxShadow: '0 6px 24px rgba(124,58,237,0.35)',
-                    transition: 'all 0.2s',
-                }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 32px rgba(124,58,237,0.5)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 6px 24px rgba(124,58,237,0.35)'; }}
-                >
-                    Enter Main Dashboard →
-                </button>
+                {/* ── Mode Selection Section ── */}
+                <div className="fade-in" style={{ marginTop: '32px' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                        <div style={{ fontSize: '10px', color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: '800', marginBottom: '8px' }}>Step 1: Choose Your Experience</div>
+                        <h2 style={{ fontSize: '24px', fontWeight: '800', fontFamily: 'Syne,sans-serif', color: 'var(--text-primary)' }}>How will you use NiveshAI?</h2>
+                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Select a mode to customise your dashboard tools.</p>
+                    </div>
 
-                <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', marginTop: '16px', letterSpacing: '0.3px' }}>
-                    All features — Transactions, Budgets, Analytics, AI Advisor — are inside the Dashboard.
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        {/* Personal Card */}
+                        <div onClick={() => { localStorage.setItem('nivesh-mode', 'personal'); navigate('/dashboard'); }} 
+                            style={{
+                                background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '24px', padding: '32px 24px',
+                                cursor: 'pointer', transition: 'all 0.3s ease', textAlign: 'center', position: 'relative', overflow: 'hidden'
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.borderColor = 'var(--accent-purple)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+                        >
+                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>👤</div>
+                            <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '8px' }}>Personal Mode</h3>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '24px' }}>Track personal savings, daily expenses, and get AI tips for your future.</p>
+                            <button style={{ padding: '10px 24px', background: 'rgba(139,92,246,0.1)', border: '1px solid var(--accent-purple)', borderRadius: '12px', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: '700' }}>Start Personal →</button>
+                        </div>
+
+                        {/* Business Card */}
+                        <div onClick={() => { localStorage.setItem('nivesh-mode', 'business'); navigate('/dashboard'); }} 
+                            style={{
+                                background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '24px', padding: '32px 24px',
+                                cursor: 'pointer', transition: 'all 0.3s ease', textAlign: 'center', position: 'relative', overflow: 'hidden'
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.borderColor = 'var(--accent-green)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+                        >
+                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🏬</div>
+                            <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '8px' }}>Business Mode</h3>
+                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '24px' }}>Manage 1,000s of customer reviews, brand ROI, and business analytics.</p>
+                            <button style={{ padding: '10px 24px', background: 'rgba(52,211,153,0.1)', border: '1px solid var(--accent-green)', borderRadius: '12px', color: 'var(--accent-green)', fontSize: '12px', fontWeight: '700' }}>Start Business →</button>
+                            <div style={{ position: 'absolute', top: '10px', right: '10px', background: '#34d399', color: '#064e3b', fontSize: '10px', fontWeight: '800', padding: '4px 8px', borderRadius: '6px' }}>PRO</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style={{ textAlign: 'center', fontSize: '11px', color: 'var(--text-muted)', marginTop: '32px', letterSpacing: '0.3px' }}>
+                    You can switch between modes anytime in the Settings menu.
                 </p>
             </div>
         </div>

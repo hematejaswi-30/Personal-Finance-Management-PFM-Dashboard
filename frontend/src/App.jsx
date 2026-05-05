@@ -15,6 +15,7 @@ import WelcomeScreen from './pages/WelcomeScreen';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Onboarding from './pages/Onboarding';
+import Reviews from './pages/Reviews';
 
 const ProtectedRoute = ({ children }) => {
     const { user } = useAuth();
@@ -52,6 +53,7 @@ const AppRoutes = () => (
         <Route path="/settings"     element={<ProtectedRouteNoLayout><Settings /></ProtectedRouteNoLayout>} />
         <Route path="/profile"      element={<ProtectedRouteNoLayout><Profile /></ProtectedRouteNoLayout>} />
         <Route path="/onboarding"   element={<ProtectedRouteNoLayout><Onboarding /></ProtectedRouteNoLayout>} />
+        <Route path="/reviews"      element={<ProtectedRoute><Reviews /></ProtectedRoute>} />
         <Route path="*"             element={<Navigate to="/login" />} />
     </Routes>
 );
