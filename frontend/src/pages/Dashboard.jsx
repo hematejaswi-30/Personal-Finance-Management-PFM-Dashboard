@@ -334,29 +334,6 @@ const Dashboard = () => {
             </div>
 
 
-            {/* Charts Row */}
-            <div className="dash-row" style={{display:'flex', flexWrap:'wrap', gap:'16px', marginBottom:'16px'}}>
-                <div style={{flex:'1.4', minWidth:'300px', background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'16px', padding:'20px'}}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px'}}>
-                        <div>
-                            <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Cash Flow</div>
-                            <div style={{fontSize:'11px',color:'var(--text-muted)',marginTop:'2px'}}>Income vs Expenses</div>
-                        </div>
-                        <span style={{fontSize:'10px',background:'rgba(139,92,246,0.1)',color:'#8b5cf6',padding:'3px 10px',borderRadius:'20px',fontWeight:'600'}}>Monthly</span>
-                    </div>
-                    <Chart categoryData={categoryData} monthlyData={monthlyData}/>
-                </div>
-                <div style={{flex:'1', minWidth:'300px', background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'16px', padding:'20px'}}>
-                    <div style={{marginBottom:'16px'}}>
-                        <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Spending Breakdown</div>
-                        <div style={{fontSize:'11px',color:'var(--text-muted)',marginTop:'2px'}}>By category</div>
-                    </div>
-                    {categoryData.length>0
-                        ? <SpendingRings data={categoryData}/>
-                        : <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'180px',color:'var(--text-muted)',fontSize:'13px',gap:'8px'}}><span style={{fontSize:'32px'}}>📊</span>Add transactions to see spending</div>
-                    }
-                </div>
-            </div>
 
             {/* Activity + Accounts Row */}
             <div className="dash-row" style={{display:'flex', flexWrap:'wrap', gap:'16px', marginBottom:'16px'}}>
