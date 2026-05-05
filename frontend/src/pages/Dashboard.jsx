@@ -143,9 +143,12 @@ const Dashboard = () => {
     const [showAddAcc,   setShowAddAcc]   = useState(false);
     const [showGuide,    setShowGuide]    = useState(false);
     const [txForm,       setTxForm]       = useState({ title:'', amount:'', type:'expense', category:'Food & Dining', accountId:'', description:'', isBusiness: false });
-    const [accForm,      setAccForm]      = useState({ name:'', type:'savings', balance:'', institution:'' });
+    const [accForm,      setAccForm]      = useState({ name:'', type:'savings', balance:'', institution:'', purpose:'personal' });
     const [expanded,     setExpanded]     = useState(null); // 'transactions'|'income'|'expenses'|'accounts'|'insights'
     const [txFilter,     setTxFilter]     = useState('all'); // 'all'|'income'|'expense'
+    const [mode,         setMode]         = useState(localStorage.getItem('nivesh-mode') || 'personal');
+
+    const isBusinessMode = mode === 'business';
 
     const fetchData = async () => {
         try {
@@ -172,7 +175,12 @@ const Dashboard = () => {
     };
     useEffect(() => { fetchData(); }, []);
     
-    const isBusinessMode = localStorage.getItem('nivesh-mode') === 'business';
+    const toggleMode = () => {
+        const newMode = mode === 'personal' ? 'business' : 'personal';
+        setMode(newMode);
+        localStorage.setItem('nivesh-mode', newMode);
+        // Optional: Trigger a small toast or haptic feedback
+    };
 
     // 🛡 Global Defense: Ensure everything is an array before processing
     const safeAccounts     = Array.isArray(accounts) ? accounts : [];
@@ -224,7 +232,16 @@ const Dashboard = () => {
     };
     const handleAddAcc = async (e) => {
         e.preventDefault();
-        try { await addAccount({...accForm, balance: parseFloat(accForm.balance)}); setShowAddAcc(false); setAccForm({name:'',type:'savings',balance:'',institution:''}); fetchData(); }
+        try { 
+            await addAccount({
+                ...accForm, 
+                balance: parseFloat(accForm.balance),
+                purpose: accForm.purpose || 'personal'
+            }); 
+            setShowAddAcc(false); 
+            setAccForm({name:'', type:'savings', balance:'', institution:'', purpose:'personal'}); 
+            fetchData(); 
+        }
         catch { setError('Failed to add account'); }
     };
 
@@ -272,8 +289,42 @@ const Dashboard = () => {
                         Welcome back, <span style={{background:'linear-gradient(90deg,#8b5cf6,#34d399)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{user?.name?.split(' ')[0]}</span>
                     </div>
                 </div>
-                <div style={{display:'flex',gap:'10px'}}>
-                    <button onClick={()=>setShowGuide(true)} style={{background:'rgba(139,92,246,0.1)',border:'1px solid rgba(139,92,246,0.2)',borderRadius:'10px',padding:'8px 16px',fontSize:'12px',fontWeight:'700',color:'#8b5cf6',cursor:'pointer'}}>✨ Guide</button>
+                <div style={{display:'flex',gap:'10px',alignItems:'center'}}>
+                    {/* Mode Toggle Button */}
+                    <div style={{ 
+                        background: 'var(--bg-secondary)', 
+                        border: '1px solid var(--border)', 
+                        borderRadius: '12px', 
+                        padding: '4px', 
+                        display: 'flex', 
+                        gap: '4px',
+                        marginRight: '10px'
+                    }}>
+                        <button onClick={() => mode !== 'personal' && toggleMode()} style={{
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                            background: !isBusinessMode ? 'var(--accent-primary)' : 'transparent',
+                            color: !isBusinessMode ? 'white' : 'var(--text-muted)',
+                            transition: 'all 0.2s'
+                        }}>👤 Personal</button>
+                        <button onClick={() => mode !== 'business' && toggleMode()} style={{
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            border: 'none',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                            background: isBusinessMode ? '#fbbf24' : 'transparent',
+                            color: isBusinessMode ? '#000' : 'var(--text-muted)',
+                            transition: 'all 0.2s'
+                        }}>🏬 Business</button>
+                    </div>
+
+                    <button onClick={()=>setShowGuide(true)} style={{background:'rgba(139,92,246,0.1)',border:'1px solid rgba(139,92,246,0.2)',borderRadius: '10px',padding:'8px 16px',fontSize:'12px',fontWeight:'700',color:'#8b5cf6',cursor:'pointer'}}>✨ Guide</button>
                     <button onClick={()=>setShowAddAcc(true)} style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'10px',padding:'8px 16px',fontSize:'12px',fontWeight:'600',color:'var(--text-secondary)',cursor:'pointer'}}>+ Account</button>
                     <button onClick={()=>setShowAddTx(true)} style={{background:'linear-gradient(135deg,#8b5cf6,#6d28d9)',border:'none',borderRadius:'10px',padding:'8px 18px',fontSize:'12px',fontWeight:'700',color:'white',cursor:'pointer',boxShadow:'0 4px 14px rgba(139,92,246,0.35)'}}>+ Transaction</button>
                 </div>
@@ -536,7 +587,61 @@ const Dashboard = () => {
             )}
 
             {/* Add Transaction Modal */}
-            {showAddTx&&(<div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowAddTx(false)}}><div className="modal"><h2 style={{fontSize:'16px',fontWeight:'700',color:'#f1f5f9',marginBottom:'20px'}}>Add Transaction</h2><form onSubmit={handleAddTx}><div style={{marginBottom:'14px'}}><label className="label">Title</label><input className="input" placeholder="e.g. Swiggy Order" value={txForm.title} onChange={e=>setTxForm({...txForm,title:e.target.value})} required/></div><div className="grid-2" style={{marginBottom:'14px'}}><div><label className="label">Amount (₹)</label><input className="input" type="number" placeholder="0" value={txForm.amount} onChange={e=>setTxForm({...txForm,amount:e.target.value})} required/></div><div><label className="label">Type</label><select className="input" value={txForm.type} onChange={e=>setTxForm({...txForm,type:e.target.value})}><option value="expense">Expense</option><option value="income">Income</option></select></div></div><div style={{marginBottom:'14px'}}><label className="label">Category</label><select className="input" value={txForm.category} onChange={e=>setTxForm({...txForm,category:e.target.value})}>{['Food & Dining','Shopping','Transport','Entertainment','Health','Education','Bills & Utilities','Salary','Investment','Business Sales','Refunds','Other'].map(c=><option key={c}>{c}</option>)}</select></div><div style={{marginBottom:'14px'}}><label className="label">Account</label><select className="input" value={txForm.accountId} onChange={e=>setTxForm({...txForm,accountId:e.target.value})} required><option value="">Select account</option>{accounts.map(a=><option key={a._id} value={a._id}>{a.name}</option>)}</select></div><div style={{marginBottom:'14px',display:'flex',alignItems:'center',gap:'10px',background:'rgba(255,255,255,0.03)',padding:'10px',borderRadius:'8px',border:'1px solid var(--border)'}}><input type="checkbox" id="isBusiness" checked={txForm.isBusiness} onChange={e=>setTxForm({...txForm,isBusiness:e.target.checked})} style={{cursor:'pointer'}}/><label htmlFor="isBusiness" style={{fontSize:'12px',color:'var(--text-primary)',cursor:'pointer',fontWeight:'600'}}>This is a Business Transaction</label></div><div style={{marginBottom:'20px'}}><label className="label">Note</label><input className="input" placeholder="Optional" value={txForm.description} onChange={e=>setTxForm({...txForm,description:e.target.value})}/></div><div style={{display:'flex',gap:'10px'}}><button type="submit" className="btn-primary">Add Transaction</button><button type="button" className="btn-secondary" onClick={()=>setShowAddTx(false)}>Cancel</button></div></form></div></div>)}
+            {showAddTx && (
+                <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) setShowAddTx(false) }}>
+                    <div className="modal">
+                        <h2 style={{ fontSize: '16px', fontWeight: '700', color: '#f1f5f9', marginBottom: '20px' }}>Add Transaction</h2>
+                        <form onSubmit={handleAddTx}>
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Title</label>
+                                <input className="input" placeholder="e.g. Swiggy Order" value={txForm.title} onChange={e => setTxForm({ ...txForm, title: e.target.value })} required />
+                            </div>
+                            <div className="grid-2" style={{ marginBottom: '14px' }}>
+                                <div>
+                                    <label className="label">Amount (₹)</label>
+                                    <input className="input" type="number" placeholder="0" value={txForm.amount} onChange={e => setTxForm({ ...txForm, amount: e.target.value })} required />
+                                </div>
+                                <div>
+                                    <label className="label">Type</label>
+                                    <select className="input" value={txForm.type} onChange={e => setTxForm({ ...txForm, type: e.target.value })}>
+                                        <option value="expense">Expense</option>
+                                        <option value="income">Income</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Category</label>
+                                <select className="input" value={txForm.category} onChange={e => setTxForm({ ...txForm, category: e.target.value })}>
+                                    {['Food & Dining', 'Shopping', 'Transport', 'Entertainment', 'Health', 'Education', 'Bills & Utilities', 'Salary', 'Investment', 'Business Sales', 'Refunds', 'Other'].map(c => <option key={c}>{c}</option>)}
+                                </select>
+                            </div>
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Account</label>
+                                <select className="input" value={txForm.accountId} required
+                                    onChange={e => {
+                                        const selectedAcc = safeAccounts.find(a => a._id === e.target.value);
+                                        setTxForm({ ...txForm, accountId: e.target.value, isBusiness: selectedAcc?.purpose === 'business' });
+                                    }}>
+                                    <option value="">Select account</option>
+                                    {accounts.map(a => <option key={a._id} value={a._id}>{a.name}</option>)}
+                                </select>
+                            </div>
+                            <div style={{ marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(255,255,255,0.03)', padding: '10px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                                <input type="checkbox" id="isBusiness" checked={txForm.isBusiness} onChange={e => setTxForm({ ...txForm, isBusiness: e.target.checked })} style={{ cursor: 'pointer' }} />
+                                <label htmlFor="isBusiness" style={{ fontSize: '12px', color: 'var(--text-primary)', cursor: 'pointer', fontWeight: '600' }}>This is a Business Transaction</label>
+                            </div>
+                            <div style={{ marginBottom: '20px' }}>
+                                <label className="label">Note</label>
+                                <input className="input" placeholder="Optional" value={txForm.description} onChange={e => setTxForm({ ...txForm, description: e.target.value })} />
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" className="btn-primary">Add Transaction</button>
+                                <button type="button" className="btn-secondary" onClick={() => setShowAddTx(false)}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* Guide Modal */}
             {showGuide && (
@@ -580,7 +685,52 @@ const Dashboard = () => {
             )}
 
             {/* Add Account Modal */}
-            {showAddAcc&&(<div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowAddAcc(false)}}><div className="modal"><h2 style={{fontSize:'16px',fontWeight:'700',color:'#f1f5f9',marginBottom:'20px'}}>Add Bank Account</h2><form onSubmit={handleAddAcc}><div style={{marginBottom:'14px'}}><label className="label">Account Name</label><input className="input" placeholder="e.g. SBI Savings" value={accForm.name} onChange={e=>setAccForm({...accForm,name:e.target.value})} required/></div><div className="grid-2" style={{marginBottom:'14px'}}><div><label className="label">Type</label><select className="input" value={accForm.type} onChange={e=>setAccForm({...accForm,type:e.target.value})}><option value="savings">Savings</option><option value="checking">Checking</option><option value="credit">Credit</option><option value="investment">Investment</option></select></div><div><label className="label">Balance (₹)</label><input className="input" type="number" placeholder="0" value={accForm.balance} onChange={e=>setAccForm({...accForm,balance:e.target.value})} required/></div></div><div style={{marginBottom:'20px'}}><label className="label">Bank Name</label><input className="input" placeholder="e.g. State Bank of India" value={accForm.institution} onChange={e=>setAccForm({...accForm,institution:e.target.value})}/></div><div style={{display:'flex',gap:'10px'}}><button type="submit" className="btn-primary">Add Account</button><button type="button" className="btn-secondary" onClick={()=>setShowAddAcc(false)}>Cancel</button></div></form></div></div>)}
+            {showAddAcc && (
+                <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) setShowAddAcc(false) }}>
+                    <div className="modal">
+                        <h2 style={{ fontSize: '16px', fontWeight: '700', color: '#f1f5f9', marginBottom: '20px' }}>Add Bank Account</h2>
+                        <form onSubmit={handleAddAcc}>
+                            <div style={{ marginBottom: '14px' }}>
+                                <label className="label">Account Name</label>
+                                <input className="input" placeholder="e.g. SBI Savings" value={accForm.name} onChange={e => setAccForm({ ...accForm, name: e.target.value })} required />
+                            </div>
+                            <div className="grid-2" style={{ marginBottom: '14px' }}>
+                                <div>
+                                    <label className="label">Type</label>
+                                    <select className="input" value={accForm.type} onChange={e => setAccForm({ ...accForm, type: e.target.value })}>
+                                        <option value="savings">Savings</option>
+                                        <option value="checking">Checking</option>
+                                        <option value="credit">Credit</option>
+                                        <option value="investment">Investment</option>
+                                        <option value="business">Business Current</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="label">Balance (₹)</label>
+                                    <input className="input" type="number" placeholder="0" value={accForm.balance} onChange={e => setAccForm({ ...accForm, balance: e.target.value })} required />
+                                </div>
+                            </div>
+                            
+                            <div style={{ marginBottom: '16px' }}>
+                                <label className="label">Account Purpose</label>
+                                <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                                    <button type="button" onClick={() => setAccForm({ ...accForm, purpose: 'personal' })} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: accForm.purpose === 'personal' ? '1px solid var(--accent-primary)' : '1px solid var(--border)', background: accForm.purpose === 'personal' ? 'rgba(139,92,246,0.1)' : 'transparent', color: accForm.purpose === 'personal' ? 'var(--accent-primary)' : 'var(--text-muted)', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>👤 Personal</button>
+                                    <button type="button" onClick={() => setAccForm({ ...accForm, purpose: 'business' })} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: accForm.purpose === 'business' ? '1px solid #fbbf24' : '1px solid var(--border)', background: accForm.purpose === 'business' ? 'rgba(251,191,36,0.1)' : 'transparent', color: accForm.purpose === 'business' ? '#fbbf24' : 'var(--text-muted)', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>🏬 Business</button>
+                                </div>
+                            </div>
+
+                            <div style={{ marginBottom: '20px' }}>
+                                <label className="label">Bank Name</label>
+                                <input className="input" placeholder="e.g. State Bank of India" value={accForm.institution} onChange={e => setAccForm({ ...accForm, institution: e.target.value })} />
+                            </div>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button type="submit" className="btn-primary">Add Account</button>
+                                <button type="button" className="btn-secondary" onClick={() => setShowAddAcc(false)}>Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
         </div>
