@@ -71,7 +71,7 @@ export default function AppLayout({ children }) {
                         <circle cx="28" cy="12" r="2.5" fill="#38bdf8"/>
                     </svg>
                     <span style={{ fontFamily:'\'Syne\', sans-serif', fontSize:'15px', fontWeight:'800',
-                                   color:'var(--text-primary)', letterSpacing:'-0.3px' }}>NiveshAI</span>
+                                   color:'var(--text-primary)', letterSpacing:'-0.3px' }}>NiveshView</span>
                 </div>
 
                 {/* Desktop Nav Links — hidden on mobile */}
@@ -255,36 +255,57 @@ export default function AppLayout({ children }) {
                 </div>
 
                 {/* Page Content */}
-                <div style={{ flex:1, minWidth:0, overflowY:'auto' }}>
+                <div style={{ 
+                    flex: 1, 
+                    minWidth: 0, 
+                    overflowY: 'auto',
+                    paddingBottom: 'calc(var(--nav-height) + 20px)' /* Ensure content doesn't get hidden behind bottom nav */
+                }}>
                     {children}
                 </div>
             </div>
 
             {/* Mobile Bottom Navigation */}
             <div className="mobile-bottom-nav"
-                 style={{ display:'none', position:'fixed', bottom:0, left:0, right:0, zIndex:50,
-                          background:'var(--bg-secondary)', borderTop:'1px solid var(--border)',
-                          padding:'8px 4px 12px' }}>
-                <div style={{ display:'flex', justifyContent:'space-around', alignItems:'center' }}>
+                style={{
+                    display: 'none',
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 'var(--nav-height)',
+                    background: 'rgba(30, 41, 59, 0.85)',
+                    backdropFilter: 'blur(16px)',
+                    borderTop: '1px solid var(--border)',
+                    zIndex: 100,
+                    paddingBottom: 'env(safe-area-inset-bottom)'
+                }}>
+                <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', height: '100%' }}>
                     {[
-                        {label:'Home',    path:'/dashboard',    emoji:'🏠'},
-                        {label:'Transact',path:'/transactions', emoji:'⇄'},
-                        {label:'Budgets', path:'/budgets',      emoji:'◎'},
-                        {label:'AI',      path:'/ai-advisor',   emoji:'✦'},
-                        {label:'More',    path:null,            emoji:'☰', action:() => setMobileMenuOpen(o=>!o)},
+                        { label: 'Home', path: '/dashboard', emoji: '🏠' },
+                        { label: 'Transact', path: '/transactions', emoji: '⇄' },
+                        { label: 'BI Reviews', path: '/reviews', emoji: '🏬' },
+                        { label: 'AI', path: '/ai-advisor', emoji: '✦' },
+                        { label: 'Menu', path: null, emoji: '☰', action: () => setMobileMenuOpen(o => !o) },
                     ].map(item => {
                         const isActive = item.path && active === item.path;
                         return (
                             <button key={item.label}
                                 onClick={() => item.action ? item.action() : navigate(item.path)}
-                                style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:'3px',
-                                         background:'transparent', border:'none', cursor:'pointer',
-                                         padding:'4px 8px', borderRadius:'8px',
-                                         color: isActive ? '#8b5cf6' : 'var(--text-muted)',
-                                         fontFamily:'\'DM Sans\', sans-serif', minWidth:'48px' }}>
-                                <span style={{ fontSize:'18px' }}>{item.emoji}</span>
-                                <span style={{ fontSize:'10px', fontWeight: isActive ? '700':'500' }}>{item.label}</span>
-                                {isActive && <div style={{ width:'4px', height:'4px', borderRadius:'50%', background:'#8b5cf6' }}/>}
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    color: isActive ? 'var(--accent-primary)' : 'var(--text-muted)',
+                                    fontFamily: 'DM Sans, sans-serif',
+                                    minWidth: '60px'
+                                }}>
+                                <span style={{ fontSize: '20px', filter: isActive ? 'drop-shadow(0 0 8px var(--accent-primary))' : 'none' }}>{item.emoji}</span>
+                                <span style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{item.label}</span>
                             </button>
                         );
                     })}
@@ -315,8 +336,10 @@ export default function AppLayout({ children }) {
                     .dash-bottom-grid { grid-template-columns: 1fr !important; }
                 }
                 @media (max-width: 560px) {
-                    .dash-kpi-grid    { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-                    .dash-page        { padding: 14px 14px 80px !important; }
+                    .dash-kpi-grid    { grid-template-columns: 1fr !important; gap: 12px !important; }
+                    .dash-page        { padding: 16px 16px 100px !important; }
+                    .stat-card        { padding: 16px !important; }
+                    h1 { font-size: var(--font-lg) !important; }
                 }
             `}</style>
         </div>

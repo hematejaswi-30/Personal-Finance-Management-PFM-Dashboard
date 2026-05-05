@@ -282,10 +282,10 @@ const Dashboard = () => {
             )}
 
             {/* Welcome Strip */}
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'22px'}}>
+            <div className="dash-header" style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'22px',flexWrap:'wrap',gap:'15px'}}>
                 <div>
-                    <div style={{fontSize:'11px',color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'1.2px',marginBottom:'3px'}}>{greeting} 👋</div>
-                    <div style={{fontFamily:'Syne,sans-serif',fontSize:'22px',fontWeight:'800',color:'var(--text-primary)',letterSpacing:'-0.3px'}}>
+                    <div style={{fontSize:'10px',color:'var(--text-muted)',textTransform:'uppercase',letterSpacing:'1.2px',marginBottom:'3px'}}>{greeting} 👋</div>
+                    <div style={{fontFamily:'Syne,sans-serif',fontSize:'var(--font-lg)',fontWeight:'800',color:'var(--text-primary)',letterSpacing:'-0.3px'}}>
                         Welcome back, <span style={{background:'linear-gradient(90deg,#8b5cf6,#34d399)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>{user?.name?.split(' ')[0]}</span>
                     </div>
                 </div>
@@ -324,9 +324,9 @@ const Dashboard = () => {
                         }}>🏬 Business</button>
                     </div>
 
-                    <button onClick={()=>setShowGuide(true)} style={{background:'rgba(139,92,246,0.1)',border:'1px solid rgba(139,92,246,0.2)',borderRadius: '10px',padding:'8px 16px',fontSize:'12px',fontWeight:'700',color:'#8b5cf6',cursor:'pointer'}}>✨ Guide</button>
-                    <button onClick={()=>setShowAddAcc(true)} style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'10px',padding:'8px 16px',fontSize:'12px',fontWeight:'600',color:'var(--text-secondary)',cursor:'pointer'}}>+ Account</button>
-                    <button onClick={()=>setShowAddTx(true)} style={{background:'linear-gradient(135deg,#8b5cf6,#6d28d9)',border:'none',borderRadius:'10px',padding:'8px 18px',fontSize:'12px',fontWeight:'700',color:'white',cursor:'pointer',boxShadow:'0 4px 14px rgba(139,92,246,0.35)'}}>+ Transaction</button>
+                    <button className="desktop-only" onClick={()=>setShowGuide(true)} style={{background:'rgba(139,92,246,0.1)',border:'1px solid rgba(139,92,246,0.2)',borderRadius: '10px',padding:'8px 16px',fontSize:'12px',fontWeight:'700',color:'#8b5cf6',cursor:'pointer'}}>✨ Guide</button>
+                    <button className="desktop-only" onClick={()=>setShowAddAcc(true)} style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'10px',padding:'8px 16px',fontSize:'12px',fontWeight:'600',color:'var(--text-secondary)',cursor:'pointer'}}>+ Account</button>
+                    <button onClick={()=>setShowAddTx(true)} style={{background:'linear-gradient(135deg,#8b5cf6,#6d28d9)',border:'none',borderRadius:'10px',padding:'8px 18px',fontSize:'11px',fontWeight:'700',color:'white',cursor:'pointer',boxShadow:'0 4px 14px rgba(139,92,246,0.35)'}}>+ Transaction</button>
                 </div>
             </div>
 
@@ -474,12 +474,12 @@ const Dashboard = () => {
             </div>
 
             {/* ── Main Dashboard Content Grid ── */}
-            <div className="dash-main-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '20px', marginBottom: '20px', alignItems: 'start' }}>
+            <div className="dash-main-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '20px', alignItems: 'start' }}>
                 
                 {/* LEFT COLUMN: Spending & Activity */}
-                <div style={{ display: 'grid', gap: '20px' }}>
+                <div style={{ display: 'grid', gap: '20px', minWidth: 0 }}>
                     {/* Compact Analytics Row (Layer 2) */}
-                    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px 20px', display: 'flex', flexWrap: 'wrap', gap: '30px', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px 20px', display: 'flex', flexWrap: 'wrap', gap: '20px', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
                             <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Analytics</div>
                             <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>

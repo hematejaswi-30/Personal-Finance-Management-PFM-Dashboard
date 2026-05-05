@@ -55,24 +55,24 @@ const Reviews = () => {
     };
 
     return (
-        <div style={{ padding: '32px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'DM Sans, sans-serif' }}>
+        <div className="dash-page" style={{ padding: '32px 20px 100px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'DM Sans, sans-serif' }}>
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
+            <div className="dash-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', gap: '20px', flexWrap: 'wrap' }}>
                 <div>
                     <div style={{ fontSize: '11px', color: 'var(--accent-primary)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '8px' }}>Business Intelligence</div>
-                    <h1 style={{ fontSize: '28px', fontWeight: '800', color: 'var(--text-primary)', fontFamily: 'Syne,sans-serif' }}>Customer Reviews</h1>
+                    <h1 style={{ fontSize: 'var(--font-xl)', fontWeight: '800', color: 'var(--text-primary)', fontFamily: 'Syne,sans-serif' }}>Customer Reviews</h1>
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
-                    <button style={{ padding: '10px 20px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Export Report</button>
+                    <button className="desktop-only" style={{ padding: '10px 20px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Export</button>
                     <button onClick={() => setShowConnectModal(true)} 
-                        style={{ padding: '10px 20px', background: 'var(--accent-primary)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '13px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px var(--purple-glow)' }}>
-                        Connect Platform +
+                        style={{ padding: '10px 20px', background: 'var(--accent-primary)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '12px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px var(--purple-glow)' }}>
+                        Connect +
                     </button>
                 </div>
             </div>
 
             {/* AI Sentiment Overview */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+            <div className="dash-kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
                 <div style={{ background: 'linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%)', border: '1px solid var(--border)', borderRadius: '20px', padding: '24px', display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: 'rgba(52,211,153,0.1)', border: '4px solid rgba(52,211,153,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>✨</div>
                     <div>
@@ -96,17 +96,17 @@ const Reviews = () => {
 
             {/* Performance Correlation Chart */}
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px', padding: '24px', marginBottom: '32px', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
                     <div>
-                        <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)' }}>Performance Correlation</h3>
-                        <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>How average rating affects monthly revenue</p>
+                        <h3 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-primary)' }}>Performance Correlation</h3>
+                        <p style={{ fontSize: '10px', color: 'var(--text-muted)' }}>How rating affects revenue</p>
                     </div>
-                    <div style={{ display: 'flex', gap: '15px', fontSize: '11px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: accentColor }}/> Revenue</div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fbbf24' }}/> Avg Rating</div>
+                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}><div style={{ width: '6px', height: '6px', borderRadius: '50%', background: accentColor }}/> Revenue</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '10px' }}><div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#fbbf24' }}/> Rating</div>
                         <button onClick={() => setShowROIGoalModal(true)}
-                            style={{ marginLeft: '10px', background: 'rgba(52,211,153,0.1)', border: '1px solid #34d39940', color: '#34d399', fontSize: '10px', fontWeight: '700', padding: '2px 8px', borderRadius: '6px', cursor: 'pointer' }}>
-                            + Add ROI Goal
+                            style={{ background: 'rgba(52,211,153,0.1)', border: '1px solid #34d39940', color: '#34d399', fontSize: '10px', fontWeight: '700', padding: '4px 10px', borderRadius: '8px', cursor: 'pointer' }}>
+                            + ROI Goal
                         </button>
                     </div>
                 </div>
