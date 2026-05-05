@@ -31,33 +31,42 @@ const HealthRing = ({ score }) => {
 
 /* ── Spending Rings ── */
 const SpendingRings = ({ data }) => {
-    const radii  = [86, 64, 44, 26];
-    const colors = ['#f59e0b', '#f43f5e', '#38bdf8', '#34d399'];
+    const radii  = [86, 68, 50, 32];
+    // Dynamic colors based on accent
+    const colors = [
+        'var(--accent-primary)', 
+        'rgba(244,63,94,0.8)', // Soft Red
+        'rgba(56,189,248,0.8)', // Soft Blue
+        'rgba(52,211,153,0.8)'  // Soft Green
+    ];
     const top4   = data.slice(0, 4);
+    
     return (
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <svg width="200" height="200" viewBox="0 0 200 200">
-                {top4.map((item, i) => {
-                    const r    = radii[i], circ = 2 * Math.PI * r;
-                    const pct  = Math.min((item.total / (top4[0]?.total || 1)) * 100, 100);
-                    const dash = `${(pct / 100) * circ} ${circ}`;
-                    return (
-                        <g key={i}>
-                            <circle cx="100" cy="100" r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="14"/>
-                            <circle cx="100" cy="100" r={r} fill="none" stroke={colors[i]} strokeWidth="14"
-                                strokeLinecap="round" strokeDasharray={dash} transform="rotate(-90 100 100)"
-                                style={{ filter: `drop-shadow(0 0 4px ${colors[i]}60)` }}/>
-                        </g>
-                    );
-                })}
-            </svg>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div style={{ position: 'relative', width: '180px', height: '180px' }}>
+                <svg width="180" height="180" viewBox="0 0 200 200">
+                    {top4.map((item, i) => {
+                        const r    = radii[i], circ = 2 * Math.PI * r;
+                        const pct  = Math.min((item.total / (top4[0]?.total || 1)) * 100, 100);
+                        const dash = `${(pct / 100) * circ} ${circ}`;
+                        return (
+                            <g key={i}>
+                                <circle cx="100" cy="100" r={r} fill="none" stroke="var(--border)" strokeWidth="12" style={{ opacity: 0.3 }}/>
+                                <circle cx="100" cy="100" r={r} fill="none" stroke={colors[i]} strokeWidth="12"
+                                    strokeLinecap="round" strokeDasharray={dash} transform="rotate(-90 100 100)"
+                                    style={{ filter: `drop-shadow(0 0 6px ${colors[i]}40)`, transition: 'stroke-dasharray 0.8s ease' }}/>
+                            </g>
+                        );
+                    })}
+                </svg>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', minWidth: '140px' }}>
                 {top4.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: colors[i], flexShrink: 0 }}/>
-                        <div>
-                            <div style={{ fontSize: '12px', color: '#e2e8f0', fontWeight: '500' }}>{item._id}</div>
-                            <div style={{ fontSize: '11px', color: '#475569' }}>₹{item.total?.toLocaleString('en-IN')}</div>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 8px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)' }}>
+                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: colors[i], flexShrink: 0, boxShadow: `0 0 8px ${colors[i]}` }}/>
+                        <div style={{ overflow: 'hidden' }}>
+                            <div style={{ fontSize: '11px', color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item._id || 'Other'}</div>
+                            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'Syne,sans-serif' }}>₹{item.total?.toLocaleString('en-IN')}</div>
                         </div>
                     </div>
                 ))}
@@ -318,8 +327,8 @@ const Dashboard = () => {
 
 
             {/* Charts Row */}
-            <div className="dash-chart-grid" style={{display:'grid',gridTemplateColumns:'1.4fr 1fr',gap:'16px',marginBottom:'16px'}}>
-                <div style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'16px',padding:'20px'}}>
+            <div className="dash-row" style={{display:'flex', flexWrap:'wrap', gap:'16px', marginBottom:'16px'}}>
+                <div style={{flex:'1.4', minWidth:'300px', background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'16px', padding:'20px'}}>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px'}}>
                         <div>
                             <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Cash Flow</div>
@@ -329,7 +338,7 @@ const Dashboard = () => {
                     </div>
                     <Chart categoryData={categoryData} monthlyData={monthlyData}/>
                 </div>
-                <div style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'16px',padding:'20px'}}>
+                <div style={{flex:'1', minWidth:'300px', background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'16px', padding:'20px'}}>
                     <div style={{marginBottom:'16px'}}>
                         <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Spending Breakdown</div>
                         <div style={{fontSize:'11px',color:'var(--text-muted)',marginTop:'2px'}}>By category</div>
@@ -342,8 +351,8 @@ const Dashboard = () => {
             </div>
 
             {/* Activity + Accounts Row */}
-            <div className="dash-chart-grid" style={{display:'grid',gridTemplateColumns:'1.4fr 1fr',gap:'16px',marginBottom:'16px'}}>
-                <div style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'16px',padding:'20px'}}>
+            <div className="dash-row" style={{display:'flex', flexWrap:'wrap', gap:'16px', marginBottom:'16px'}}>
+                <div style={{flex:'1.4', minWidth:'300px', background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'16px', padding:'20px'}}>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px'}}>
                         <div>
                             <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Recent Activity</div>
