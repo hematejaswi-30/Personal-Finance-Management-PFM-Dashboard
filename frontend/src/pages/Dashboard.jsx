@@ -31,15 +31,15 @@ const HealthRing = ({ score }) => {
 
 /* ── Spending Rings ── */
 const SpendingRings = ({ data }) => {
-    const radii  = [70, 55, 40, 25];
+    const radii  = [55, 42, 29, 16];
     const colors = ['var(--accent-primary)', '#34d399', '#f43f5e', '#fbbf24'];
     if (!data || !Array.isArray(data)) return null;
     const top4 = [...data].sort((a,b)=>b.total-a.total).slice(0, 4);
     
     return (
-        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', justifyContent: 'center', padding: '10px 0' }}>
-            <div style={{ position: 'relative', width: '150px', height: '150px' }}>
-                <svg width="150" height="150" viewBox="0 0 200 200" style={{ transform: 'rotate(-90deg)' }}>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'relative', width: '110px', height: '110px' }}>
+                <svg width="110" height="110" viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)' }}>
                     {top4.map((item, i) => {
                         const r = radii[i], circ = 2 * Math.PI * r;
                         const firstTotal = top4[0]?.total || 1;
@@ -47,22 +47,22 @@ const SpendingRings = ({ data }) => {
                         const dash = `${(pct / 100) * circ} ${circ}`;
                         return (
                             <g key={i}>
-                                <circle cx="100" cy="100" r={r} fill="none" stroke="var(--border)" strokeWidth="10" style={{ opacity: 0.1 }}/>
-                                <circle cx="100" cy="100" r={r} fill="none" stroke={colors[i]} strokeWidth="10"
+                                <circle cx="80" cy="80" r={r} fill="none" stroke="var(--border)" strokeWidth="8" style={{ opacity: 0.1 }}/>
+                                <circle cx="80" cy="80" r={r} fill="none" stroke={colors[i]} strokeWidth="8"
                                     strokeLinecap="round" strokeDasharray={dash}
-                                    style={{ filter: `drop-shadow(0 0 3px ${colors[i]}40)`, transition: 'stroke-dasharray 1s ease-out' }}/>
+                                    style={{ transition: 'stroke-dasharray 1s ease-out' }}/>
                             </g>
                         );
                     })}
                 </svg>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '130px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', minWidth: '160px' }}>
                 {top4.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 10px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)' }}>
-                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: colors[i] }}/>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '3px 6px', borderRadius: '6px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)' }}>
+                        <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: colors[i] }}/>
                         <div style={{ overflow: 'hidden' }}>
-                            <div style={{ fontSize: '10px', color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item._id || 'Other'}</div>
-                            <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>₹{item.total?.toLocaleString('en-IN')}</div>
+                            <div style={{ fontSize: '9px', color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap' }}>{item._id || 'Other'}</div>
+                            <div style={{ fontSize: '8px', color: 'var(--text-muted)' }}>₹{(item.total/1000).toFixed(1)}k</div>
                         </div>
                     </div>
                 ))}
@@ -71,7 +71,29 @@ const SpendingRings = ({ data }) => {
     );
 };
 
-/* ── Insight Cards ── */
+/* ── Mini Cash Flow ── */
+const MiniCashFlow = ({ income, expense }) => {
+    const total = Math.max(income + expense, 1);
+    const incPct = (income / total) * 100;
+    const expPct = (expense / total) * 100;
+    
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '180px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: '700' }}>
+                <span style={{ color: '#34d399' }}>📥 ₹{(income/1000).toFixed(1)}k</span>
+                <span style={{ color: '#f43f5e' }}>📤 ₹{(expense/1000).toFixed(1)}k</span>
+            </div>
+            <div style={{ height: '8px', background: 'var(--border)', borderRadius: '4px', overflow: 'hidden', display: 'flex' }}>
+                <div style={{ width: `${incPct}%`, background: '#34d399', transition: 'width 1s ease' }}/>
+                <div style={{ width: `${expPct}%`, background: '#f43f5e', transition: 'width 1s ease' }}/>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '9px', color: 'var(--text-muted)' }}>
+                <span>Income</span>
+                <span>Expenses</span>
+            </div>
+        </div>
+    );
+};
 const makeInsights = (savingsRate, budgets, totalIncome, totalExpenses) => {
     const ins = [];
     const budgetList = Array.isArray(budgets) ? budgets : [];
@@ -374,13 +396,21 @@ const Dashboard = () => {
                 
                 {/* LEFT COLUMN: Spending & Activity */}
                 <div style={{ display: 'grid', gap: '20px' }}>
-                    {/* Spending Breakdown Card */}
-                    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px' }}>
-                        <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '12px' }}>Spending Breakdown</div>
-                        {modeAwareCategoryData.length > 0
-                            ? <SpendingRings data={modeAwareCategoryData} />
-                            : <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '12px' }}>No spending data yet</div>
-                        }
+                    {/* Compact Analytics Row (Layer 2) */}
+                    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '16px 20px', display: 'flex', flexWrap: 'wrap', gap: '30px', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                            <div style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Analytics</div>
+                            <div style={{ display: 'flex', gap: '40px', alignItems: 'center' }}>
+                                <div style={{ borderRight: '1px solid var(--border)', paddingRight: '40px' }}>
+                                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '10px' }}>Spending Mix</div>
+                                    <SpendingRings data={modeAwareCategoryData} />
+                                </div>
+                                <div>
+                                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginBottom: '10px' }}>Cash Flow (In vs Out)</div>
+                                    <MiniCashFlow income={isBusinessMode ? bizIncome : totalIncome} expense={isBusinessMode ? bizExpense : totalExpenses} />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Recent Activity Card */}
