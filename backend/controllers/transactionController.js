@@ -1,4 +1,5 @@
 const Transaction = require('../models/Transaction');
+const Account = require('../models/Account');
 
 // GET ALL TRANSACTIONS
 // GET /api/transactions
@@ -61,9 +62,21 @@ const addTransaction = async (req, res) => {
             description,
             date: date || Date.now()
         });
+
+        // 🟢 Update Account Balance
+        const account = await Account.findById(accountId);
+        if (account) {
+            if (type === 'income') {
+                account.balance += amount;
+            } else {
+                account.balance -= amount;
+            }
+            await account.save();
+        }
+
         res.status(201).json({
             transaction,
-            message: '✅ Transaction added successfully'
+            message: '✅ Transaction added and balance updated'
         });
     } catch (error) {
         res.status(500).json({
@@ -120,9 +133,20 @@ const deleteTransaction = async (req, res) => {
                 message: '❌ Not authorized'
             });
         }
+        // 🔴 Reverse Account Balance before deleting
+        const account = await Account.findById(transaction.accountId);
+        if (account) {
+            if (transaction.type === 'income') {
+                account.balance -= transaction.amount;
+            } else {
+                account.balance += transaction.amount;
+            }
+            await account.save();
+        }
+
         await Transaction.findByIdAndDelete(req.params.id);
         res.json({
-            message: '✅ Transaction deleted successfully'
+            message: '✅ Transaction deleted and balance reverted'
         });
     } catch (error) {
         res.status(500).json({
