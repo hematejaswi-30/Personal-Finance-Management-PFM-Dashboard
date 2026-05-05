@@ -37,9 +37,19 @@ const TransactionSchema = new mongoose.Schema({
             'Bills & Utilities',
             'Salary',
             'Investment',
+            'Business Sales',
+            'Refunds',
             'Other'
         ],
         default: 'Other'
+    },
+    isBusiness: {
+        type: Boolean,
+        default: false
+    },
+    isRefund: {
+        type: Boolean,
+        default: false
     },
     description: {
         type: String,

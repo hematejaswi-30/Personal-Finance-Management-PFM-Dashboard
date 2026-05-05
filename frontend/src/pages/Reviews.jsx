@@ -1,9 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import {
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area
+} from 'recharts';
 
 const Reviews = () => {
     const { accent } = useTheme();
     const [filter, setFilter] = useState('all');
+    
+    // Mock data for ROI Correlation (Revenue vs Rating)
+    const correlationData = [
+        { month: 'Jan', revenue: 45000, rating: 4.2 },
+        { month: 'Feb', revenue: 52000, rating: 4.4 },
+        { month: 'Mar', revenue: 48000, rating: 4.3 },
+        { month: 'Apr', revenue: 61000, rating: 4.6 },
+        { month: 'May', revenue: 58000, rating: 4.5 },
+        { month: 'Jun', revenue: 72000, rating: 4.8 },
+    ];
     
     const mockReviews = [
         { id: 1, user: 'Rahul S.', platform: 'Amazon', rating: 5, text: 'Amazing quality! The material feels very premium. Highly recommended.', sentiment: 'Positive', date: '2 hours ago' },
@@ -53,6 +66,42 @@ const Reviews = () => {
                 <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px', padding: '24px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>UNRESOLVED</div>
                     <div style={{ fontSize: '24px', fontWeight: '800', color: '#f43f5e' }}>{stats.negative}%</div>
+                </div>
+            </div>
+
+            {/* Performance Correlation Chart */}
+            <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px', padding: '24px', marginBottom: '32px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                    <div>
+                        <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)' }}>Performance Correlation</h3>
+                        <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>How average rating affects monthly revenue</p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '15px', fontSize: '11px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)' }}/> Revenue</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fbbf24' }}/> Avg Rating</div>
+                    </div>
+                </div>
+                <div style={{ height: '240px', width: '100%' }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart data={correlationData}>
+                            <defs>
+                                <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.1}/>
+                                    <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0}/>
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                            <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{fill:'var(--text-muted)', fontSize:11}} />
+                            <YAxis yAxisId="left" axisLine={false} tickLine={false} tick={{fill:'var(--text-muted)', fontSize:11}} tickFormatter={v=>`₹${v/1000}k`} />
+                            <YAxis yAxisId="right" orientation="right" axisLine={false} tickLine={false} tick={{fill:'var(--text-muted)', fontSize:11}} domain={[0, 5]} />
+                            <Tooltip 
+                                contentStyle={{background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'12px', fontSize:'12px'}}
+                                itemStyle={{fontWeight:'700'}}
+                            />
+                            <Area yAxisId="left" type="monotone" dataKey="revenue" stroke="var(--accent-primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+                            <Line yAxisId="right" type="monotone" dataKey="rating" stroke="#fbbf24" strokeWidth={2} dot={{fill:'#fbbf24', r:4}} />
+                        </AreaChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
 

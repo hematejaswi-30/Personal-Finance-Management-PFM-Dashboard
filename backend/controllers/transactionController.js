@@ -45,7 +45,7 @@ const getTransaction = async (req, res) => {
 // ADD TRANSACTION
 // POST /api/transactions
 const addTransaction = async (req, res) => {
-    const { title, amount, type, category, accountId, description, date } = req.body;
+    const { title, amount, type, category, accountId, description, date, isBusiness, isRefund } = req.body;
     try {
         if (!title || !amount || !type || !accountId) {
             return res.status(400).json({
@@ -60,7 +60,9 @@ const addTransaction = async (req, res) => {
             type,
             category: category || 'Other',
             description,
-            date: date || Date.now()
+            date: date || Date.now(),
+            isBusiness: isBusiness || false,
+            isRefund: isRefund || false
         });
 
         // 🟢 Update Account Balance
