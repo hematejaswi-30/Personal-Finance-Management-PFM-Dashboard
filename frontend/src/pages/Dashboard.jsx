@@ -39,6 +39,7 @@ const SpendingRings = ({ data }) => {
         'rgba(56,189,248,0.8)', // Soft Blue
         'rgba(52,211,153,0.8)'  // Soft Green
     ];
+    if (!data || !Array.isArray(data)) return null;
     const top4   = data.slice(0, 4);
     
     return (
@@ -47,7 +48,8 @@ const SpendingRings = ({ data }) => {
                 <svg width="180" height="180" viewBox="0 0 200 200">
                     {top4.map((item, i) => {
                         const r    = radii[i], circ = 2 * Math.PI * r;
-                        const pct  = Math.min((item.total / (top4[0]?.total || 1)) * 100, 100);
+                        const firstTotal = top4[0]?.total || 1;
+                        const pct  = Math.min(((item?.total || 0) / firstTotal) * 100, 100);
                         const dash = `${(pct / 100) * circ} ${circ}`;
                         return (
                             <g key={i}>
@@ -264,7 +266,7 @@ const Dashboard = () => {
                                     {k.key==='expenses' && (
                                         <div style={{paddingTop:'12px'}}>
                                             <div style={{fontSize:'11px',color:'var(--text-muted)',marginBottom:'10px',fontWeight:'600',textTransform:'uppercase'}}>Top Spending Categories</div>
-                                            {categoryData.slice(0,5).map((cat,i)=>{
+                                            {(categoryData || []).slice(0,5).map((cat,i)=>{
                                                 const pct=Math.round((cat.total/Math.max(totalExpenses,1))*100);
                                                 return(
                                                     <div key={i} style={{marginBottom:'8px'}}>
