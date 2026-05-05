@@ -7,7 +7,26 @@ import {
 const Reviews = () => {
     const { accent, theme } = useTheme();
     const [filter, setFilter] = useState('all');
+    const [showConnectModal, setShowConnectModal] = useState(false);
     const [hasPlatforms, setHasPlatforms] = useState(true); // Toggle for demo
+    const [showROIGoalModal, setShowROIGoalModal] = useState(false);
+    const isBusinessMode = localStorage.getItem('nivesh-mode') === 'business';
+    
+    if (!isBusinessMode) {
+        return (
+            <div style={{ padding: '60px 20px', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
+                <div style={{ fontSize: '60px', marginBottom: '24px' }}>🏬</div>
+                <h2 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '16px', fontFamily: 'Syne, sans-serif' }}>Unlock Business Pro</h2>
+                <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '32px' }}>
+                    The Reviews and ROI Sentiment Hub is part of the **NiveshAI Business Suite**. Switch to Business Mode to analyze customer feedback and track your brand's growth.
+                </p>
+                <button onClick={() => { localStorage.setItem('nivesh-mode', 'business'); window.location.reload(); }} 
+                    style={{ padding: '14px 32px', background: 'var(--accent-primary)', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 15px rgba(139,92,246,0.3)' }}>
+                    Switch to Business Mode
+                </button>
+            </div>
+        );
+    }
     
     // Mock data for ROI Correlation (Revenue vs Rating)
     const correlationData = [
@@ -45,7 +64,10 @@ const Reviews = () => {
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button style={{ padding: '10px 20px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Export Report</button>
-                    <button style={{ padding: '10px 20px', background: 'var(--accent-primary)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '13px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px var(--purple-glow)' }}>Connect Platform +</button>
+                    <button onClick={() => setShowConnectModal(true)} 
+                        style={{ padding: '10px 20px', background: 'var(--accent-primary)', border: 'none', borderRadius: '12px', color: 'white', fontSize: '13px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 12px var(--purple-glow)' }}>
+                        Connect Platform +
+                    </button>
                 </div>
             </div>
 
@@ -82,6 +104,10 @@ const Reviews = () => {
                     <div style={{ display: 'flex', gap: '15px', fontSize: '11px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: accentColor }}/> Revenue</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fbbf24' }}/> Avg Rating</div>
+                        <button onClick={() => setShowROIGoalModal(true)}
+                            style={{ marginLeft: '10px', background: 'rgba(52,211,153,0.1)', border: '1px solid #34d39940', color: '#34d399', fontSize: '10px', fontWeight: '700', padding: '2px 8px', borderRadius: '6px', cursor: 'pointer' }}>
+                            + Add ROI Goal
+                        </button>
                     </div>
                 </div>
                 <div style={{ height: '240px', width: '100%' }}>
@@ -162,6 +188,62 @@ const Reviews = () => {
                         ))}
                     </div>
                 </>
+            )}
+
+            {/* Connect Platform Modal */}
+            {showConnectModal && (
+                <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowConnectModal(false)}>
+                    <div className="modal" style={{ maxWidth: '500px' }}>
+                        <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '20px', fontFamily: 'Syne, sans-serif' }}>Connect Your Brand</h2>
+                        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px' }}>Select a platform to import reviews and correlate them with your business revenue.</p>
+                        
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
+                            {[
+                                { name: 'Amazon Central', icon: '📦', color: '#ff9900' },
+                                { name: 'Shopify Store', icon: '🛍️', color: '#95bf47' },
+                                { name: 'Flipkart Seller', icon: '🛒', color: '#2874f0' },
+                                { name: 'Google Reviews', icon: '🔍', color: '#4285f4' }
+                            ].map(p => (
+                                <button key={p.name} onClick={() => { alert(`Connecting to ${p.name}... This requires API credentials.`); setShowConnectModal(false); setHasPlatforms(true); }}
+                                    style={{ padding: '16px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: '16px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
+                                    <div style={{ fontSize: '24px', marginBottom: '8px' }}>{p.icon}</div>
+                                    <div style={{ fontSize: '12px', fontWeight: '700', color: 'white' }}>{p.name}</div>
+                                </button>
+                            ))}
+                        </div>
+                        
+                        <button className="btn-secondary" onClick={() => setShowConnectModal(false)} style={{ width: '100%' }}>Cancel</button>
+                    </div>
+                </div>
+            )}
+
+            {/* ROI Goal Modal */}
+            {showROIGoalModal && (
+                <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && setShowROIGoalModal(false)}>
+                    <div className="modal" style={{ maxWidth: '400px' }}>
+                        <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '16px', fontFamily: 'Syne, sans-serif' }}>Set ROI Target</h2>
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '20px' }}>Define a revenue target based on your customer satisfaction rating goals.</p>
+                        
+                        <div style={{ marginBottom: '16px' }}>
+                            <label className="label">Target Monthly Revenue (₹)</label>
+                            <input className="input" type="number" placeholder="e.g. 100000" />
+                        </div>
+                        <div style={{ marginBottom: '24px' }}>
+                            <label className="label">Min. Star Rating to Achieve This</label>
+                            <select className="input">
+                                <option>4.0 Stars</option>
+                                <option>4.5 Stars</option>
+                                <option>4.8 Stars</option>
+                                <option>5.0 Stars</option>
+                            </select>
+                        </div>
+                        
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button className="btn-primary" onClick={() => setShowROIGoalModal(false)}>Save Target</button>
+                            <button className="btn-secondary" onClick={() => setShowROIGoalModal(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

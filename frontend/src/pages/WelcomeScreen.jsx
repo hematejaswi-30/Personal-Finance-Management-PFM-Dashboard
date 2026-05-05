@@ -240,10 +240,6 @@ const WelcomeScreen = () => {
                         <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>Select a mode to customise your dashboard tools.</p>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                        {/* Personal Card */}
-                        <div onClick={() => { localStorage.setItem('nivesh-mode', 'personal'); navigate('/dashboard'); }} 
-                    {/* Selection Cards */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', width: '100%' }}>
                         {/* Personal Mode */}
                         <div 
@@ -258,17 +254,23 @@ const WelcomeScreen = () => {
                         >
                             <div style={{ fontSize: '40px', marginBottom: '16px' }}>👤</div>
                             <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '8px' }}>Personal Mode</h3>
-                            style={{
-                                background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '24px', padding: '32px 24px',
-                                cursor: 'pointer', transition: 'all 0.3s ease', textAlign: 'center', position: 'relative', overflow: 'hidden'
+                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>Track personal wealth, set budgets, and grow your savings.</p>
+                        </div>
+
+                        {/* Business Mode */}
+                        <div 
+                            onClick={() => { localStorage.setItem('nivesh-mode', 'business'); navigate('/dashboard'); }}
+                            style={{ 
+                                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', 
+                                padding: '32px 20px', cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                textAlign: 'center', position: 'relative', overflow: 'hidden'
                             }}
-                            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.borderColor = 'var(--accent-green)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(52,211,153,0.1)'; e.currentTarget.style.borderColor = '#34d399'; e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(52,211,153,0.15)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
                         >
-                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🏬</div>
-                            <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '8px' }}>Business Mode</h3>
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '24px' }}>Manage 1,000s of customer reviews, brand ROI, and business analytics.</p>
-                            <button style={{ padding: '10px 24px', background: 'rgba(52,211,153,0.1)', border: '1px solid var(--accent-green)', borderRadius: '12px', color: 'var(--accent-green)', fontSize: '12px', fontWeight: '700' }}>Start Business →</button>
+                            <div style={{ fontSize: '40px', marginBottom: '16px' }}>🏬</div>
+                            <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '8px' }}>Business Pro</h3>
+                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>Manage brand ROI, analyze thousands of reviews, and track revenue.</p>
                             <div style={{ position: 'absolute', top: '10px', right: '10px', background: '#34d399', color: '#064e3b', fontSize: '10px', fontWeight: '800', padding: '4px 8px', borderRadius: '6px' }}>PRO</div>
                         </div>
                     </div>

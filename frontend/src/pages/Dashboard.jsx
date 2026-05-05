@@ -180,14 +180,18 @@ const Dashboard = () => {
     const safeBudgets      = Array.isArray(budgetData) ? budgetData : [];
 
     const totalBalance  = safeAccounts.reduce((s,a) => s + (a.balance || 0), 0);
-    const totalIncome   = safeTransactions.filter(t => t.type==='income').reduce((s,t) => s+(t.amount || 0), 0);
-    const totalExpenses = safeTransactions.filter(t => t.type==='expense').reduce((s,t) => s+(t.amount || 0), 0);
+    
+    // 🛡 Mode-Aware KPI Calculations
+    const modeTransactions = safeTransactions.filter(t => isBusinessMode ? t.isBusiness : !t.isBusiness);
+    
+    const totalIncome   = modeTransactions.filter(t => t.type==='income').reduce((s,t) => s+(t.amount || 0), 0);
+    const totalExpenses = modeTransactions.filter(t => t.type==='expense').reduce((s,t) => s+(t.amount || 0), 0);
 
     const bizIncome   = safeTransactions.filter(t => t.isBusiness && t.type==='income').reduce((s,t) => s+(t.amount || 0), 0);
     const bizExpense  = safeTransactions.filter(t => t.isBusiness && t.type==='expense').reduce((s,t) => s+(t.amount || 0), 0);
 
     const savingsRate   = totalIncome > 0 ? +((( totalIncome - totalExpenses)/totalIncome)*100).toFixed(1) : 0;
-    const healthScore   = Math.min(100, Math.round(Math.min(savingsRate*1.5,40) + (totalIncome>totalExpenses?40:(totalIncome/Math.max(totalExpenses,1))*40) + 20));
+    const healthScore   = Math.min(100, Math.round(Math.max(0, Math.min(savingsRate*1.5,40)) + (totalIncome>totalExpenses?40:(totalIncome/Math.max(totalExpenses,1))*40) + 20));
     const insights      = makeInsights(savingsRate, safeBudgets, totalIncome, totalExpenses);
     const hour          = new Date().getHours();
     const greeting      = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
@@ -365,6 +369,33 @@ const Dashboard = () => {
                                                 ))
                                             }
                                             <button onClick={()=>setShowAddAcc(true)} style={{marginTop:'10px',width:'100%',background:'rgba(139,92,246,0.08)',border:'1px solid rgba(139,92,246,0.2)',borderRadius:'8px',padding:'7px',fontSize:'12px',fontWeight:'700',color:'#8b5cf6',cursor:'pointer'}}>+ Add Account</button>
+                                        </div>
+                                    )}
+
+                                    {/* Business Profit Expanded */}
+                                    {k.key==='business' && (
+                                        <div style={{paddingTop:'12px'}}>
+                                            <div style={{fontSize:'11px',color:'var(--text-muted)',marginBottom:'10px',fontWeight:'600',textTransform:'uppercase'}}>Business Performance</div>
+                                            <div style={{display:'flex',gap:'10px',marginBottom:'12px'}}>
+                                                <div style={{flex:1,background:'rgba(52,211,153,0.1)',padding:'10px',borderRadius:'10px',textAlign:'center'}}>
+                                                    <div style={{fontSize:'9px',color:'#34d399',fontWeight:'700'}}>BIZ INCOME</div>
+                                                    <div style={{fontSize:'13px',fontWeight:'800',color:'white'}}>₹{bizIncome.toLocaleString('en-IN')}</div>
+                                                </div>
+                                                <div style={{flex:1,background:'rgba(244,63,94,0.1)',padding:'10px',borderRadius:'10px',textAlign:'center'}}>
+                                                    <div style={{fontSize:'9px',color:'#f43f5e',fontWeight:'700'}}>BIZ COSTS</div>
+                                                    <div style={{fontSize:'13px',fontWeight:'800',color:'white'}}>₹{bizExpense.toLocaleString('en-IN')}</div>
+                                                </div>
+                                            </div>
+                                            <div style={{background:'var(--bg-tertiary)',padding:'12px',borderRadius:'12px',border:'1px solid var(--border)',marginBottom:'10px'}}>
+                                                <div style={{display:'flex',justifyContent:'space-between',fontSize:'11px',marginBottom:'4px'}}>
+                                                    <span style={{color:'var(--text-muted)'}}>Net ROI Target</span>
+                                                    <span style={{color:'#fbbf24',fontWeight:'700'}}>65%</span>
+                                                </div>
+                                                <div style={{height:'4px',background:'var(--border)',borderRadius:'2px',overflow:'hidden'}}>
+                                                    <div style={{height:'100%',width:'65%',background:'#fbbf24',borderRadius:'2px'}}/>
+                                                </div>
+                                            </div>
+                                            <button onClick={()=>navigate('/reviews')} style={{width:'100%',background:'var(--accent-primary)',border:'none',borderRadius:'8px',padding:'8px',fontSize:'12px',fontWeight:'700',color:'white',cursor:'pointer',boxShadow:'0 4px 10px rgba(139,92,246,0.3)'}}>Manage ROI & Reviews →</button>
                                         </div>
                                     )}
 
