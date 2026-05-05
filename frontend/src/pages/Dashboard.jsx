@@ -170,6 +170,18 @@ const Dashboard = () => {
     const hour          = new Date().getHours();
     const greeting      = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
 
+    // 📊 Mode-Aware Category Breakdown
+    const modeAwareCategoryData = (() => {
+        const filtered = safeTransactions.filter(t => t.type === 'expense' && (isBusinessMode ? t.isBusiness : !t.isBusiness));
+        const grouped = filtered.reduce((acc, t) => {
+            acc[t.category] = (acc[t.category] || 0) + (t.amount || 0);
+            return acc;
+        }, {});
+        return Object.entries(grouped)
+            .map(([_id, total]) => ({ _id, total }))
+            .sort((a, b) => b.total - a.total);
+    })();
+
     const handleAddTx = async (e) => {
         e.preventDefault();
         try { 
@@ -365,8 +377,8 @@ const Dashboard = () => {
                     {/* Spending Breakdown Card */}
                     <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px' }}>
                         <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '12px' }}>Spending Breakdown</div>
-                        {categoryData.length > 0
-                            ? <SpendingRings data={categoryData} />
+                        {modeAwareCategoryData.length > 0
+                            ? <SpendingRings data={modeAwareCategoryData} />
                             : <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '12px' }}>No spending data yet</div>
                         }
                     </div>
