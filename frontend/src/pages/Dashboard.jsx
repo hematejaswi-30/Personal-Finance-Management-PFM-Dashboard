@@ -31,44 +31,38 @@ const HealthRing = ({ score }) => {
 
 /* ── Spending Rings ── */
 const SpendingRings = ({ data }) => {
-    const radii  = [86, 68, 50, 32];
-    // Dynamic colors based on accent
-    const colors = [
-        'var(--accent-primary)', 
-        'rgba(244,63,94,0.8)', // Soft Red
-        'rgba(56,189,248,0.8)', // Soft Blue
-        'rgba(52,211,153,0.8)'  // Soft Green
-    ];
+    const radii  = [70, 55, 40, 25];
+    const colors = ['var(--accent-primary)', '#34d399', '#f43f5e', '#fbbf24'];
     if (!data || !Array.isArray(data)) return null;
-    const top4   = data.slice(0, 4);
+    const top4 = [...data].sort((a,b)=>b.total-a.total).slice(0, 4);
     
     return (
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <div style={{ position: 'relative', width: '180px', height: '180px' }}>
-                <svg width="180" height="180" viewBox="0 0 200 200">
+        <div style={{ display: 'flex', gap: '20px', alignItems: 'center', justifyContent: 'center', padding: '10px 0' }}>
+            <div style={{ position: 'relative', width: '150px', height: '150px' }}>
+                <svg width="150" height="150" viewBox="0 0 200 200" style={{ transform: 'rotate(-90deg)' }}>
                     {top4.map((item, i) => {
-                        const r    = radii[i], circ = 2 * Math.PI * r;
+                        const r = radii[i], circ = 2 * Math.PI * r;
                         const firstTotal = top4[0]?.total || 1;
-                        const pct  = Math.min(((item?.total || 0) / firstTotal) * 100, 100);
+                        const pct = Math.min(((item?.total || 0) / firstTotal) * 100, 100);
                         const dash = `${(pct / 100) * circ} ${circ}`;
                         return (
                             <g key={i}>
-                                <circle cx="100" cy="100" r={r} fill="none" stroke="var(--border)" strokeWidth="12" style={{ opacity: 0.3 }}/>
-                                <circle cx="100" cy="100" r={r} fill="none" stroke={colors[i]} strokeWidth="12"
-                                    strokeLinecap="round" strokeDasharray={dash} transform="rotate(-90 100 100)"
-                                    style={{ filter: `drop-shadow(0 0 6px ${colors[i]}40)`, transition: 'stroke-dasharray 0.8s ease' }}/>
+                                <circle cx="100" cy="100" r={r} fill="none" stroke="var(--border)" strokeWidth="10" style={{ opacity: 0.1 }}/>
+                                <circle cx="100" cy="100" r={r} fill="none" stroke={colors[i]} strokeWidth="10"
+                                    strokeLinecap="round" strokeDasharray={dash}
+                                    style={{ filter: `drop-shadow(0 0 3px ${colors[i]}40)`, transition: 'stroke-dasharray 1s ease-out' }}/>
                             </g>
                         );
                     })}
                 </svg>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', minWidth: '140px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '130px' }}>
                 {top4.map((item, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 8px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)' }}>
-                        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: colors[i], flexShrink: 0, boxShadow: `0 0 8px ${colors[i]}` }}/>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 10px', borderRadius: '8px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)' }}>
+                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: colors[i] }}/>
                         <div style={{ overflow: 'hidden' }}>
-                            <div style={{ fontSize: '11px', color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item._id || 'Other'}</div>
-                            <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'Syne,sans-serif' }}>₹{item.total?.toLocaleString('en-IN')}</div>
+                            <div style={{ fontSize: '10px', color: 'var(--text-primary)', fontWeight: '700', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item._id || 'Other'}</div>
+                            <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>₹{item.total?.toLocaleString('en-IN')}</div>
                         </div>
                     </div>
                 ))}
@@ -356,91 +350,82 @@ const Dashboard = () => {
                                             <button onClick={()=>navigate('/ai-advisor')} style={{marginTop:'4px',width:'100%',background:'rgba(245,158,11,0.08)',border:'1px solid rgba(245,158,11,0.2)',borderRadius:'8px',padding:'7px',fontSize:'12px',fontWeight:'700',color:'#f59e0b',cursor:'pointer'}}>Full AI Advisor →</button>
                                         </div>
                                     )}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-
-
-
-            {/* Charts Row */}
-            <div className="dash-row" style={{marginBottom:'16px'}}>
-                <div style={{background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'16px', padding:'20px'}}>
-                    <div style={{marginBottom:'16px'}}>
-                        <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Spending Breakdown</div>
-                        <div style={{fontSize:'11px',color:'var(--text-muted)',marginTop:'2px'}}>By category</div>
+                                </div            {/* ── Main Dashboard Content Grid ── */}
+            <div className="dash-main-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '20px', marginBottom: '20px', alignItems: 'start' }}>
+                
+                {/* LEFT COLUMN: Spending & Activity */}
+                <div style={{ display: 'grid', gap: '20px' }}>
+                    {/* Spending Breakdown Card */}
+                    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px' }}>
+                        <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '12px' }}>Spending Breakdown</div>
+                        {categoryData.length > 0
+                            ? <SpendingRings data={categoryData} />
+                            : <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '12px' }}>No spending data yet</div>
+                        }
                     </div>
-                    {categoryData.length>0
-                        ? <SpendingRings data={categoryData}/>
-                        : <div style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'180px',color:'var(--text-muted)',fontSize:'13px',gap:'8px'}}><span style={{fontSize:'32px'}}>📊</span>Add transactions to see spending</div>
-                    }
-                </div>
-            </div>
-            <div className="dash-row" style={{display:'flex', flexWrap:'wrap', gap:'16px', marginBottom:'16px'}}>
-                <div style={{flex:'1.4', minWidth:'300px', background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'16px', padding:'20px'}}>
-                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'16px'}}>
-                        <div>
-                            <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Recent Activity</div>
-                            <div style={{fontSize:'11px',color:'var(--text-muted)',marginTop:'2px'}}>Latest transactions</div>
+
+                    {/* Recent Activity Card */}
+                    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                            <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)' }}>Recent Activity</div>
+                            <button onClick={() => setShowAddTx(true)} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '4px 12px', fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600' }}>+ Add</button>
                         </div>
-                        <button onClick={()=>setShowAddTx(true)} style={{background:'var(--bg-tertiary)',border:'1px solid var(--border)',borderRadius:'8px',padding:'4px 12px',fontSize:'11px',color:'var(--text-muted)',cursor:'pointer',fontWeight:'600'}}>+ Add</button>
-                    </div>
-                    <div style={{display:'flex',flexDirection:'column',gap:'2px'}}>
-                        {transactions.length===0
-                            ? <div style={{textAlign:'center',padding:'32px',color:'var(--text-muted)',fontSize:'13px'}}><div style={{fontSize:'28px',marginBottom:'8px'}}>💸</div>No transactions yet</div>
-                            : transactions.slice(0,7).map((tx,i)=>(
-                                <div key={i} style={{display:'flex',alignItems:'center',gap:'12px',padding:'9px 10px',borderRadius:'10px',cursor:'default',transition:'background 0.15s'}}
-                                    onMouseEnter={e=>e.currentTarget.style.background='var(--bg-tertiary)'}
-                                    onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                                    <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
-                                        <div style={{width:'36px',height:'36px',borderRadius:'10px',background:tx.type==='income'?'rgba(52,211,153,0.1)':'rgba(244,63,94,0.1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
-                                            {tx.type==='income'?'📥':'📤'}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            {safeTransactions.length === 0
+                                ? <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '12px' }}>No transactions recorded</div>
+                                : safeTransactions.slice(0, 5).map((tx, i) => (
+                                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 10px', borderRadius: '10px', transition: 'background 0.2s' }}
+                                        onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+                                        onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: tx.type === 'income' ? 'rgba(52,211,153,0.1)' : 'rgba(244,63,94,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>
+                                            {tx.type === 'income' ? '📥' : '📤'}
                                         </div>
-                                        <div>
-                                            <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>{tx.title}</div>
-                                            <div style={{display:'flex',alignItems:'center',gap:'6px'}}>
-                                                <div style={{fontSize:'11px',color:'var(--text-muted)'}}>{tx.category}</div>
-                                                {tx.isBusiness && <span style={{fontSize:'8px',fontWeight:'800',background:'rgba(251,191,36,0.1)',color:'#fbbf24',padding:'1px 5px',borderRadius:'4px',textTransform:'uppercase'}}>🏬 Business</span>}
-                                                {tx.isRefund && <span style={{fontSize:'8px',fontWeight:'800',background:'rgba(244,63,94,0.1)',color:'#f43f5e',padding:'1px 5px',borderRadius:'4px',textTransform:'uppercase'}}>↩ Refund</span>}
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-primary)' }}>{tx.title}</div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{tx.category}</div>
+                                                {tx.isBusiness && <span style={{ fontSize: '7px', fontWeight: '800', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', padding: '1px 4px', borderRadius: '3px' }}>🏬 BIZ</span>}
                                             </div>
                                         </div>
+                                        <div style={{ fontSize: '12px', fontWeight: '700', color: tx.type === 'income' ? '#34d399' : '#f43f5e' }}>{tx.type === 'income' ? '+' : '-'}₹{tx.amount?.toLocaleString('en-IN')}</div>
                                     </div>
-                                    <div style={{marginLeft:'auto',fontSize:'13px',fontWeight:'700',color:tx.type==='income'?'#34d399':'#f43f5e',flexShrink:0}}>{tx.type==='income'?'+':'-'}₹{tx.amount?.toLocaleString('en-IN')}</div>
-                                </div>
-                            ))
-                        }
+                                ))}
+                        </div>
+                        {safeTransactions.length > 0 && <div style={{ borderTop: '1px solid var(--border)', marginTop: '8px', paddingTop: '10px', textAlign: 'center' }}><span onClick={() => navigate('/transactions')} style={{ fontSize: '11px', color: 'var(--accent-primary)', fontWeight: '700', cursor: 'pointer' }}>View All →</span></div>}
                     </div>
-                    {transactions.length>0&&(<div style={{borderTop:'1px solid var(--border)',marginTop:'8px',paddingTop:'10px',textAlign:'center'}}><span onClick={()=>navigate('/transactions')} style={{fontSize:'12px',color:'#8b5cf6',fontWeight:'600',cursor:'pointer'}}>View all transactions →</span></div>)}
                 </div>
 
-                <div style={{display:'flex',flexDirection:'column',gap:'14px'}}>
-                    <div style={{background:'linear-gradient(135deg,#0f172a,#1e1b4b)',border:'1px solid rgba(139,92,246,0.2)',borderRadius:'16px',padding:'18px',textAlign:'center'}}>
-                        <div style={{fontSize:'11px',color:'rgba(255,255,255,0.4)',textTransform:'uppercase',letterSpacing:'1px',marginBottom:'10px'}}>Financial Health</div>
-                        <HealthRing score={healthScore}/>
+                {/* RIGHT COLUMN: Health & Accounts */}
+                <div style={{ display: 'grid', gap: '20px' }}>
+                    <div style={{ background: 'linear-gradient(135deg,#0f172a,#1e1b4b)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: '16px', padding: '20px', textAlign: 'center' }}>
+                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px' }}>Financial Health</div>
+                        <HealthRing score={healthScore} />
                     </div>
-                    <div style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'16px',padding:'18px',flex:1}}>
-                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'12px'}}>
-                            <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>Accounts</div>
-                            <button onClick={()=>setShowAddAcc(true)} style={{background:'var(--bg-tertiary)',border:'1px solid var(--border)',borderRadius:'8px',padding:'4px 10px',fontSize:'11px',color:'var(--text-muted)',cursor:'pointer',fontWeight:'600'}}>+ Add</button>
+                    
+                    <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)' }}>Linked Accounts</div>
+                            <button onClick={() => setShowAddAcc(true)} style={{ background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '4px 10px', fontSize: '11px', color: 'var(--text-muted)', cursor: 'pointer', fontWeight: '600' }}>+ Add</button>
                         </div>
-                        {accounts.length===0
-                            ? <div style={{textAlign:'center',padding:'14px',color:'var(--text-muted)',fontSize:'12px'}}>No accounts yet</div>
-                            : accounts.slice(0,4).map(acc=>(
-                                <div key={acc._id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'9px 0',borderBottom:'1px solid var(--border)'}}>
-                                    <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-                                        <div style={{width:'30px',height:'30px',borderRadius:'8px',background:'rgba(139,92,246,0.1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px'}}>🏦</div>
+                        {safeAccounts.length === 0
+                            ? <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '12px' }}>No accounts yet</div>
+                            : safeAccounts.slice(0, 4).map(acc => (
+                                <div key={acc._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--border)' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'rgba(139,92,246,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px' }}>🏦</div>
                                         <div>
-                                            <div style={{fontSize:'12px',fontWeight:'600',color:'var(--text-primary)'}}>{acc.name}</div>
-                                            <div style={{fontSize:'10px',color:'var(--text-muted)'}}>{acc.type}</div>
+                                            <div style={{ fontSize: '12px', fontWeight: '600', color: 'var(--text-primary)' }}>{acc.name}</div>
+                                            <div style={{ fontSize: '9px', color: 'var(--text-muted)' }}>{acc.type}</div>
                                         </div>
                                     </div>
-                                    <div style={{fontFamily:'Syne,sans-serif',fontSize:'13px',fontWeight:'700',color:'#8b5cf6'}}>₹{acc.balance.toLocaleString('en-IN')}</div>
+                                    <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--accent-primary)' }}>₹{acc.balance.toLocaleString('en-IN')}</div>
                                 </div>
                             ))
                         }
-                        {accounts.length>4&&(<div style={{paddingTop:'8px',textAlign:'center'}}><span onClick={()=>navigate('/accounts')} style={{fontSize:'11px',color:'#8b5cf6',fontWeight:'600',cursor:'pointer'}}>+{accounts.length-4} more â†’</span></div>)}
+                    </div>
+                </div>
+            </div>
+#8b5cf6',fontWeight:'600',cursor:'pointer'}}>+{accounts.length-4} more â†’</span></div>)}
                     </div>
                 </div>
             </div>
