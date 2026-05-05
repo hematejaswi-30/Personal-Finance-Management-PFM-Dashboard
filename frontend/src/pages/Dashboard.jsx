@@ -91,13 +91,23 @@ const makeInsights = (savingsRate, budgets, totalIncome, totalExpenses) => {
 
 /* ── Stat Card ── */
 const StatCard = ({ label, value, sub, color, icon, trend }) => (
-    <div className="stat-card" style={{ '--card-accent': color }}>
-        <div className="stat-icon" style={{ background: `${color}18` }}>{icon}</div>
-        <div className="stat-label">{label}</div>
-        <div className="stat-value">{value}</div>
-        <div className="stat-trend" style={{ color: trend?.startsWith('+') ? '#34d399' : trend?.startsWith('-') ? '#f43f5e' : '#94a3b8' }}>
-            {trend} <span style={{ color: '#475569', fontWeight: '400' }}>{sub}</span>
+    <div className="stat-card" 
+        style={{ 
+            '--card-accent': color,
+            flex: 1, minWidth: '220px', background: 'var(--bg-secondary)', border: '1px solid var(--border)', 
+            borderRadius: '16px', padding: '20px', position: 'relative', overflow: 'hidden', cursor: 'pointer',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.borderColor = color; e.currentTarget.style.boxShadow = `0 10px 30px ${color}15`; }}
+        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+    >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `${color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>{icon}</div>
+            <div style={{ fontSize: '10px', fontWeight: '800', color: trend?.includes('+') ? '#34d399' : '#f43f5e', background: trend?.includes('+') ? 'rgba(52,211,153,0.1)' : 'rgba(244,63,94,0.1)', padding: '2px 8px', borderRadius: '20px' }}>{trend}</div>
         </div>
+        <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>{label}</div>
+        <div style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', fontFamily: 'Syne, sans-serif' }}>{value}</div>
+        <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{sub}</div>
     </div>
 );
 
@@ -115,6 +125,7 @@ const Dashboard = () => {
     const [error,        setError]        = useState('');
     const [showAddTx,    setShowAddTx]    = useState(false);
     const [showAddAcc,   setShowAddAcc]   = useState(false);
+    const [showGuide,    setShowGuide]    = useState(false);
     const [txForm,       setTxForm]       = useState({ title:'', amount:'', type:'expense', category:'Food & Dining', accountId:'', description:'', isBusiness: false });
     const [accForm,      setAccForm]      = useState({ name:'', type:'savings', balance:'', institution:'' });
     const [expanded,     setExpanded]     = useState(null); // 'transactions'|'income'|'expenses'|'accounts'|'insights'
@@ -230,6 +241,7 @@ const Dashboard = () => {
                     </div>
                 </div>
                 <div style={{display:'flex',gap:'10px'}}>
+                    <button onClick={()=>setShowGuide(true)} style={{background:'rgba(139,92,246,0.1)',border:'1px solid rgba(139,92,246,0.2)',borderRadius:'10px',padding:'8px 16px',fontSize:'12px',fontWeight:'700',color:'#8b5cf6',cursor:'pointer'}}>✨ Guide</button>
                     <button onClick={()=>setShowAddAcc(true)} style={{background:'var(--bg-secondary)',border:'1px solid var(--border)',borderRadius:'10px',padding:'8px 16px',fontSize:'12px',fontWeight:'600',color:'var(--text-secondary)',cursor:'pointer'}}>+ Account</button>
                     <button onClick={()=>setShowAddTx(true)} style={{background:'linear-gradient(135deg,#8b5cf6,#6d28d9)',border:'none',borderRadius:'10px',padding:'8px 18px',fontSize:'12px',fontWeight:'700',color:'white',cursor:'pointer',boxShadow:'0 4px 14px rgba(139,92,246,0.35)'}}>+ Transaction</button>
                 </div>
@@ -382,17 +394,25 @@ const Dashboard = () => {
                                 <div key={i} style={{display:'flex',alignItems:'center',gap:'12px',padding:'9px 10px',borderRadius:'10px',cursor:'default',transition:'background 0.15s'}}
                                     onMouseEnter={e=>e.currentTarget.style.background='var(--bg-tertiary)'}
                                     onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-                                    <div style={{width:'34px',height:'34px',borderRadius:'9px',background:tx.type==='income'?'rgba(52,211,153,0.12)':'rgba(244,63,94,0.08)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'14px',flexShrink:0}}>{tx.type==='income'?'📥':'📤'}</div>
-                                    <div style={{flex:1,overflow:'hidden'}}>
-                                        <div style={{fontSize:'12px',fontWeight:'600',color:'var(--text-primary)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{tx.title}</div>
-                                        <div style={{fontSize:'10px',color:'var(--text-muted)',marginTop:'1px'}}>{tx.category}</div>
+                                    <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+                                        <div style={{width:'36px',height:'36px',borderRadius:'10px',background:tx.type==='income'?'rgba(52,211,153,0.1)':'rgba(244,63,94,0.1)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px'}}>
+                                            {tx.type==='income'?'📥':'📤'}
+                                        </div>
+                                        <div>
+                                            <div style={{fontSize:'13px',fontWeight:'700',color:'var(--text-primary)'}}>{tx.title}</div>
+                                            <div style={{display:'flex',alignItems:'center',gap:'6px'}}>
+                                                <div style={{fontSize:'11px',color:'var(--text-muted)'}}>{tx.category}</div>
+                                                {tx.isBusiness && <span style={{fontSize:'8px',fontWeight:'800',background:'rgba(251,191,36,0.1)',color:'#fbbf24',padding:'1px 5px',borderRadius:'4px',textTransform:'uppercase'}}>🏬 Business</span>}
+                                                {tx.isRefund && <span style={{fontSize:'8px',fontWeight:'800',background:'rgba(244,63,94,0.1)',color:'#f43f5e',padding:'1px 5px',borderRadius:'4px',textTransform:'uppercase'}}>↩ Refund</span>}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{fontSize:'13px',fontWeight:'700',color:tx.type==='income'?'#34d399':'#f43f5e',flexShrink:0}}>{tx.type==='income'?'+':'-'}₹{tx.amount?.toLocaleString('en-IN')}</div>
+                                    <div style={{marginLeft:'auto',fontSize:'13px',fontWeight:'700',color:tx.type==='income'?'#34d399':'#f43f5e',flexShrink:0}}>{tx.type==='income'?'+':'-'}₹{tx.amount?.toLocaleString('en-IN')}</div>
                                 </div>
                             ))
                         }
                     </div>
-                    {transactions.length>0&&(<div style={{borderTop:'1px solid var(--border)',marginTop:'8px',paddingTop:'10px',textAlign:'center'}}><span onClick={()=>navigate('/transactions')} style={{fontSize:'12px',color:'#8b5cf6',fontWeight:'600',cursor:'pointer'}}>View all transactions â†’</span></div>)}
+                    {transactions.length>0&&(<div style={{borderTop:'1px solid var(--border)',marginTop:'8px',paddingTop:'10px',textAlign:'center'}}><span onClick={()=>navigate('/transactions')} style={{fontSize:'12px',color:'#8b5cf6',fontWeight:'600',cursor:'pointer'}}>View all transactions →</span></div>)}
                 </div>
 
                 <div style={{display:'flex',flexDirection:'column',gap:'14px'}}>
@@ -456,6 +476,47 @@ const Dashboard = () => {
 
             {/* Add Transaction Modal */}
             {showAddTx&&(<div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowAddTx(false)}}><div className="modal"><h2 style={{fontSize:'16px',fontWeight:'700',color:'#f1f5f9',marginBottom:'20px'}}>Add Transaction</h2><form onSubmit={handleAddTx}><div style={{marginBottom:'14px'}}><label className="label">Title</label><input className="input" placeholder="e.g. Swiggy Order" value={txForm.title} onChange={e=>setTxForm({...txForm,title:e.target.value})} required/></div><div className="grid-2" style={{marginBottom:'14px'}}><div><label className="label">Amount (₹)</label><input className="input" type="number" placeholder="0" value={txForm.amount} onChange={e=>setTxForm({...txForm,amount:e.target.value})} required/></div><div><label className="label">Type</label><select className="input" value={txForm.type} onChange={e=>setTxForm({...txForm,type:e.target.value})}><option value="expense">Expense</option><option value="income">Income</option></select></div></div><div style={{marginBottom:'14px'}}><label className="label">Category</label><select className="input" value={txForm.category} onChange={e=>setTxForm({...txForm,category:e.target.value})}>{['Food & Dining','Shopping','Transport','Entertainment','Health','Education','Bills & Utilities','Salary','Investment','Business Sales','Refunds','Other'].map(c=><option key={c}>{c}</option>)}</select></div><div style={{marginBottom:'14px'}}><label className="label">Account</label><select className="input" value={txForm.accountId} onChange={e=>setTxForm({...txForm,accountId:e.target.value})} required><option value="">Select account</option>{accounts.map(a=><option key={a._id} value={a._id}>{a.name}</option>)}</select></div><div style={{marginBottom:'14px',display:'flex',alignItems:'center',gap:'10px',background:'rgba(255,255,255,0.03)',padding:'10px',borderRadius:'8px',border:'1px solid var(--border)'}}><input type="checkbox" id="isBusiness" checked={txForm.isBusiness} onChange={e=>setTxForm({...txForm,isBusiness:e.target.checked})} style={{cursor:'pointer'}}/><label htmlFor="isBusiness" style={{fontSize:'12px',color:'var(--text-primary)',cursor:'pointer',fontWeight:'600'}}>This is a Business Transaction</label></div><div style={{marginBottom:'20px'}}><label className="label">Note</label><input className="input" placeholder="Optional" value={txForm.description} onChange={e=>setTxForm({...txForm,description:e.target.value})}/></div><div style={{display:'flex',gap:'10px'}}><button type="submit" className="btn-primary">Add Transaction</button><button type="button" className="btn-secondary" onClick={()=>setShowAddTx(false)}>Cancel</button></div></form></div></div>)}
+
+            {/* Guide Modal */}
+            {showGuide && (
+                <div className="modal-overlay" onClick={() => setShowGuide(false)}>
+                    <div className="modal" style={{ maxWidth: '500px', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', border: '1px solid rgba(139,92,246,0.3)' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                            <div style={{ fontSize: '40px', marginBottom: '12px' }}>{isBusinessMode ? '🏬' : '👤'}</div>
+                            <h2 style={{ fontSize: '20px', fontWeight: '800', color: 'white', fontFamily: 'Syne, sans-serif' }}>
+                                {isBusinessMode ? 'Business Pro Guide' : 'Personal Finance Guide'}
+                            </h2>
+                            <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)', marginTop: '4px' }}>Let's master your {isBusinessMode ? 'brand' : 'wealth'} together.</p>
+                        </div>
+
+                        <div style={{ display: 'grid', gap: '12px' }}>
+                            {(isBusinessMode ? [
+                                { t: '📈 Connect Store Revenue', d: 'Link your business bank accounts and tag income as "Business Transaction" to see ROI.' },
+                                { t: '🤖 AI Sentiment Hub', d: 'Go to "Customer Reviews" to analyze thousands of feedbacks instantly.' },
+                                { t: '✍️ Smart AI Replies', d: 'Handle 1000s of reviews by using the AI Draft button on the reviews page.' },
+                                { t: '📊 Correlation Charts', d: 'Monitor how your star ratings directly move your revenue line.' }
+                            ] : [
+                                { t: '🏦 Link Accounts', d: 'Add your savings and investments to see your real-time Net Worth.' },
+                                { t: '💸 Track Daily Spend', d: 'Add every expense. Our AI will automatically categorize them for you.' },
+                                { t: '🎯 Set Budgets', d: 'Create monthly limits to ensure you save at least 20% of your income.' },
+                                { t: '💡 Follow AI Insights', d: 'Check the AI cards for personalized tips on how to grow your money.' }
+                            ]).map((step, i) => (
+                                <div key={i} style={{ display: 'flex', gap: '15px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#8b5cf6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: '800', flexShrink: 0 }}>{i + 1}</div>
+                                    <div>
+                                        <div style={{ fontSize: '13px', fontWeight: '700', color: 'white', marginBottom: '2px' }}>{step.t}</div>
+                                        <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)', lineHeight: 1.4 }}>{step.d}</div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <button onClick={() => setShowGuide(false)} style={{ marginTop: '24px', width: '100%', padding: '12px', background: '#8b5cf6', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer', boxShadow: '0 4px 15px rgba(139,92,246,0.3)' }}>
+                            Got it, let's go!
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Add Account Modal */}
             {showAddAcc&&(<div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowAddAcc(false)}}><div className="modal"><h2 style={{fontSize:'16px',fontWeight:'700',color:'#f1f5f9',marginBottom:'20px'}}>Add Bank Account</h2><form onSubmit={handleAddAcc}><div style={{marginBottom:'14px'}}><label className="label">Account Name</label><input className="input" placeholder="e.g. SBI Savings" value={accForm.name} onChange={e=>setAccForm({...accForm,name:e.target.value})} required/></div><div className="grid-2" style={{marginBottom:'14px'}}><div><label className="label">Type</label><select className="input" value={accForm.type} onChange={e=>setAccForm({...accForm,type:e.target.value})}><option value="savings">Savings</option><option value="checking">Checking</option><option value="credit">Credit</option><option value="investment">Investment</option></select></div><div><label className="label">Balance (₹)</label><input className="input" type="number" placeholder="0" value={accForm.balance} onChange={e=>setAccForm({...accForm,balance:e.target.value})} required/></div></div><div style={{marginBottom:'20px'}}><label className="label">Bank Name</label><input className="input" placeholder="e.g. State Bank of India" value={accForm.institution} onChange={e=>setAccForm({...accForm,institution:e.target.value})}/></div><div style={{display:'flex',gap:'10px'}}><button type="submit" className="btn-primary">Add Account</button><button type="button" className="btn-secondary" onClick={()=>setShowAddAcc(false)}>Cancel</button></div></form></div></div>)}

@@ -243,21 +243,21 @@ const WelcomeScreen = () => {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                         {/* Personal Card */}
                         <div onClick={() => { localStorage.setItem('nivesh-mode', 'personal'); navigate('/dashboard'); }} 
-                            style={{
-                                background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '24px', padding: '32px 24px',
-                                cursor: 'pointer', transition: 'all 0.3s ease', textAlign: 'center', position: 'relative', overflow: 'hidden'
+                    {/* Selection Cards */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', width: '100%' }}>
+                        {/* Personal Mode */}
+                        <div 
+                            onClick={() => { localStorage.setItem('nivesh-mode', 'personal'); navigate('/dashboard'); }}
+                            style={{ 
+                                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', 
+                                padding: '32px 20px', cursor: 'pointer', transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                textAlign: 'center', position: 'relative', overflow: 'hidden'
                             }}
-                            onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.borderColor = 'var(--accent-purple)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.2)'; }}
-                            onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none'; }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(139,92,246,0.1)'; e.currentTarget.style.borderColor = '#8b5cf6'; e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(139,92,246,0.15)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
                         >
-                            <div style={{ fontSize: '48px', marginBottom: '16px' }}>👤</div>
+                            <div style={{ fontSize: '40px', marginBottom: '16px' }}>👤</div>
                             <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'white', marginBottom: '8px' }}>Personal Mode</h3>
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '24px' }}>Track personal savings, daily expenses, and get AI tips for your future.</p>
-                            <button style={{ padding: '10px 24px', background: 'rgba(139,92,246,0.1)', border: '1px solid var(--accent-purple)', borderRadius: '12px', color: 'var(--accent-purple)', fontSize: '12px', fontWeight: '700' }}>Start Personal →</button>
-                        </div>
-
-                        {/* Business Card */}
-                        <div onClick={() => { localStorage.setItem('nivesh-mode', 'business'); navigate('/dashboard'); }} 
                             style={{
                                 background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '24px', padding: '32px 24px',
                                 cursor: 'pointer', transition: 'all 0.3s ease', textAlign: 'center', position: 'relative', overflow: 'hidden'

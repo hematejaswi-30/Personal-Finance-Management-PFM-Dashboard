@@ -5,8 +5,9 @@ import {
 } from 'recharts';
 
 const Reviews = () => {
-    const { accent } = useTheme();
+    const { accent, theme } = useTheme();
     const [filter, setFilter] = useState('all');
+    const [hasPlatforms, setHasPlatforms] = useState(true); // Toggle for demo
     
     // Mock data for ROI Correlation (Revenue vs Rating)
     const correlationData = [
@@ -17,6 +18,8 @@ const Reviews = () => {
         { month: 'May', revenue: 58000, rating: 4.5 },
         { month: 'Jun', revenue: 72000, rating: 4.8 },
     ];
+
+    const accentColor = accent?.primary || '#8b5cf6';
     
     const mockReviews = [
         { id: 1, user: 'Rahul S.', platform: 'Amazon', rating: 5, text: 'Amazing quality! The material feels very premium. Highly recommended.', sentiment: 'Positive', date: '2 hours ago' },
@@ -70,14 +73,14 @@ const Reviews = () => {
             </div>
 
             {/* Performance Correlation Chart */}
-            <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px', padding: '24px', marginBottom: '32px' }}>
+            <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '20px', padding: '24px', marginBottom: '32px', boxShadow: '0 8px 30px rgba(0,0,0,0.1)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                     <div>
                         <h3 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)' }}>Performance Correlation</h3>
                         <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>How average rating affects monthly revenue</p>
                     </div>
                     <div style={{ display: 'flex', gap: '15px', fontSize: '11px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)' }}/> Revenue</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: accentColor }}/> Revenue</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fbbf24' }}/> Avg Rating</div>
                     </div>
                 </div>
@@ -86,8 +89,8 @@ const Reviews = () => {
                         <AreaChart data={correlationData}>
                             <defs>
                                 <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.1}/>
-                                    <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0}/>
+                                    <stop offset="5%" stopColor={accentColor} stopOpacity={0.2}/>
+                                    <stop offset="95%" stopColor={accentColor} stopOpacity={0}/>
                                 </linearGradient>
                             </defs>
                             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
@@ -98,54 +101,68 @@ const Reviews = () => {
                                 contentStyle={{background:'var(--bg-secondary)', border:'1px solid var(--border)', borderRadius:'12px', fontSize:'12px'}}
                                 itemStyle={{fontWeight:'700'}}
                             />
-                            <Area yAxisId="left" type="monotone" dataKey="revenue" stroke="var(--accent-primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
+                            <Area yAxisId="left" type="monotone" dataKey="revenue" stroke={accentColor} strokeWidth={3} fillOpacity={1} fill="url(#colorRev)" />
                             <Line yAxisId="right" type="monotone" dataKey="rating" stroke="#fbbf24" strokeWidth={2} dot={{fill:'#fbbf24', r:4}} />
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
             </div>
 
-            {/* Filters */}
-            <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                {['all', 'Amazon', 'Flipkart', 'Google'].map(p => (
-                    <button key={p} onClick={() => setFilter(p)} 
-                        style={{ padding: '8px 16px', background: filter === p ? 'var(--accent-primary)' : 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '10px', color: filter === p ? 'white' : 'var(--text-muted)', fontSize: '12px', fontWeight: '700', cursor: 'pointer', textTransform: 'capitalize' }}>
-                        {p}
-                    </button>
-                ))}
-            </div>
-
-            {/* Review List */}
-            <div style={{ display: 'grid', gap: '16px' }}>
-                {mockReviews.filter(r => filter === 'all' || r.platform === filter).map(r => (
-                    <div key={r.id} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px', transition: 'transform 0.2s' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', color: 'var(--accent-primary)' }}>{r.user.charAt(0)}</div>
-                                <div>
-                                    <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-primary)' }}>{r.user}</div>
-                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>via <span style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>{r.platform}</span> · {r.date}</div>
-                                </div>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                                <div style={{ display: 'flex', gap: '2px', marginBottom: '4px' }}>
-                                    {[...Array(5)].map((_, i) => (
-                                        <span key={i} style={{ color: i < r.rating ? '#fbbf24' : 'var(--border)', fontSize: '14px' }}>★</span>
-                                    ))}
-                                </div>
-                                <div style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: r.sentiment === 'Positive' ? '#34d399' : r.sentiment === 'Negative' ? '#f43f5e' : '#f59e0b', padding: '2px 8px', borderRadius: '4px', background: r.sentiment === 'Positive' ? 'rgba(52,211,153,0.1)' : r.sentiment === 'Negative' ? 'rgba(244,63,94,0.1)' : 'rgba(245,158,11,0.1)' }}>{r.sentiment}</div>
-                            </div>
-                        </div>
-                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>{r.text}</p>
-                        <div style={{ display: 'flex', gap: '10px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                            <button style={{ padding: '8px 16px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span>🤖</span> AI Draft Reply
+            {!hasPlatforms ? (
+                <div style={{ background: 'var(--bg-secondary)', border: '1px dashed var(--border)', borderRadius: '24px', padding: '60px 20px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '20px' }}>🔌</div>
+                    <h2 style={{ fontSize: '20px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '10px' }}>No Platforms Connected</h2>
+                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '400px', margin: '0 auto 24px' }}>Connect your Amazon or Flipkart store to start analyzing thousands of reviews with AI.</p>
+                    <button onClick={() => setHasPlatforms(true)} style={{ padding: '12px 32px', background: accentColor, color: 'white', border: 'none', borderRadius: '12px', fontWeight: '700', cursor: 'pointer' }}>Connect Now</button>
+                </div>
+            ) : (
+                <>
+                    {/* Filters */}
+                    <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+                        {['all', 'Amazon', 'Flipkart', 'Google'].map(p => (
+                            <button key={p} onClick={() => setFilter(p)} 
+                                style={{ padding: '8px 16px', background: filter === p ? accentColor : 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '10px', color: filter === p ? 'white' : 'var(--text-muted)', fontSize: '12px', fontWeight: '700', cursor: 'pointer', textTransform: 'capitalize' }}>
+                                {p}
                             </button>
-                            <button style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Mark as Resolved</button>
-                        </div>
+                        ))}
                     </div>
-                ))}
-            </div>
+
+                    {/* Review List */}
+                    <div style={{ display: 'grid', gap: '16px' }}>
+                        {mockReviews.filter(r => filter === 'all' || r.platform === filter).map(r => (
+                            <div key={r.id} className="review-card" style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '16px', padding: '20px', transition: 'all 0.2s ease' }}
+                                onMouseEnter={e => { e.currentTarget.style.borderColor = accentColor; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)'; }}
+                                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+                            >
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', color: accentColor }}>{r.user.charAt(0)}</div>
+                                        <div>
+                                            <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-primary)' }}>{r.user}</div>
+                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>via <span style={{ fontWeight: '600', color: 'var(--text-secondary)' }}>{r.platform}</span> · {r.date}</div>
+                                        </div>
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                                        <div style={{ display: 'flex', gap: '2px', marginBottom: '4px' }}>
+                                            {[...Array(5)].map((_, i) => (
+                                                <span key={i} style={{ color: i < r.rating ? '#fbbf24' : 'var(--border)', fontSize: '14px' }}>★</span>
+                                            ))}
+                                        </div>
+                                        <div style={{ fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', color: r.sentiment === 'Positive' ? '#34d399' : r.sentiment === 'Negative' ? '#f43f5e' : '#f59e0b', padding: '2px 8px', borderRadius: '4px', background: r.sentiment === 'Positive' ? 'rgba(52,211,153,0.1)' : r.sentiment === 'Negative' ? 'rgba(244,63,94,0.1)' : 'rgba(245,158,11,0.1)' }}>{r.sentiment}</div>
+                                    </div>
+                                </div>
+                                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>{r.text}</p>
+                                <div style={{ display: 'flex', gap: '10px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                                    <button style={{ padding: '8px 16px', background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '12px', fontWeight: '600', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <span>🤖</span> AI Draft Reply
+                                    </button>
+                                    <button style={{ padding: '8px 16px', background: 'transparent', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-muted)', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Mark as Resolved</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 };
